@@ -15,7 +15,7 @@ public class Firefly : MonoBehaviour {
 
 	void Update() {
 		if(Vector3.Distance(player.transform.position, transform.position) < minPlayerDistance) {
-			//Vector3.
+			GetComponent<Rigidbody>().velocity = new Vector3(transform.position.x - player.transform.position.x, transform.position.y - player.transform.position.y, transform.position.z - player.transform.position.z);
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class Firefly : MonoBehaviour {
 			} else {
 				yforce = Random.Range (-2f, 2f);
 			}
-			if(Random.Range (0f, 10f) > 7f) {
+			if(Random.Range (0f, 10f) > 3f) {
 				gameObject.GetComponent<Rigidbody>().velocity = new Vector3(xforce, yforce, zforce);
 			} else {
 				gameObject.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
