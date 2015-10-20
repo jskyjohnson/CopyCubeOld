@@ -1,19 +1,25 @@
 using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 public class Player : MonoBehaviour {
+	public GameObject canvas;
 	public static string direction;
 	public static string respawnDirection;
 	public static Vector3 respawnLocation;
 	public GameObject explosionParticle;
 	public float speed;
+	public float customFadeDistance;
 	public int jumpsAvailable;
 	public bool dontMove;
 	public PhysicMaterial sticky;
 	public PhysicMaterial unsticky;
 
+	Touch touch;
+	bool canRespawn;
+
 	private GameObject[] taggedGameObjects;
 	void Start () {
+		canRespawn = true;
 		dontMove = false;
 		jumpsAvailable = 1;
 		direction = "+x";
@@ -73,13 +79,33 @@ public class Player : MonoBehaviour {
 				jumpsAvailable --;
 				GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
 			}
+
+			if(Input.GetKeyDown(KeyCode.Space)) {
+				canvas.GetComponent<GameManager>().respawn();
+			}
+
+			foreach (Touch touch in Input.touches) {
+				if (touch.position.x < Screen.width/2 && canRespawn) {
+					canvas.GetComponent<GameManager>().respawn();
+					canRespawn = false;
+					StartCoroutine(resetTouch());
+				}
+				else if (touch.position.x > Screen.width/2 && jumpsAvailable >= 1) {
+					jumpsAvailable --;
+					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+				} 
+			}
 			//check which blocks are close and fade in
 			// loop through each tagged object, remembering nearest one found
 			taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform"); 
 			foreach (GameObject platform in taggedGameObjects) {
 				Vector3 objectPos = platform.transform.position;
 				float distanceSqr = (objectPos - transform.position).sqrMagnitude;
-				if (distanceSqr < 53f) {
+				if(customFadeDistance != 0) {
+					if (distanceSqr < customFadeDistance) {
+						StartCoroutine(FadeIn (platform, 1f));
+					}
+				} else if (distanceSqr < 53f) {
 					StartCoroutine(FadeIn (platform, 1f));
 				}
 			}
@@ -88,6 +114,11 @@ public class Player : MonoBehaviour {
 		} else {
 			//GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		}
+	}
+
+	IEnumerator resetTouch() {
+		yield return new WaitForSeconds(0.3f);
+		canRespawn = true;
 	}
 
 	public void jump() {
@@ -127,6 +158,10 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	public void die() {
+		canvas.GetComponent<GameManager>().die();
+	}
+	
 	public void explode() {
 		int i = 0;
 		while(i < 7) {

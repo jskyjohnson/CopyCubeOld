@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 public class End : MonoBehaviour {
 	private Vector3 position;
+	public string nextLevel;
 	GameObject[] taggedGameObjects;
 	float distance;
 	bool flying;
@@ -14,7 +15,7 @@ public class End : MonoBehaviour {
 		if(coll.gameObject.name == "Player") {
 			coll.gameObject.transform.position = position;
 			GameManager.started = false;
-			StartCoroutine(fly (coll.gameObject));
+			StartCoroutine(fly (coll.gameObject, nextLevel));
 			StartCoroutine(fadeObjects());
 			coll.gameObject.GetComponent<Rigidbody>().useGravity = false;
 			coll.gameObject.GetComponent<Rigidbody>().AddTorque(new Vector3(10f, 0f, 0f));
@@ -28,7 +29,7 @@ public class End : MonoBehaviour {
 		}
 	}
 
-	IEnumerator fly(GameObject item) {
+	IEnumerator fly(GameObject item, string nextLevel) {
 		flying = true;
 		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform"); 
 		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 2f, 0f);
@@ -37,7 +38,7 @@ public class End : MonoBehaviour {
 		yield return new WaitForSeconds(0.5f);
 		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 30f, 0f);
 		yield return new WaitForSeconds(0.9f);
-		Application.LoadLevel ("1");
+		Application.LoadLevel (nextLevel);
 	}
 
 	IEnumerator fadeObjects() {

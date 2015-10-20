@@ -21,10 +21,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void respawn() {
-		player.GetComponent<Player>().explode();
 		Vector3 newPos = new Vector3(Mathf.Round (player.transform.position.x), Mathf.Round (player.transform.position.y), Mathf.Round (player.transform.position.z));
 		if(newPos != Player.respawnLocation) {
-		Instantiate (clone, newPos, Quaternion.identity);
+			player.GetComponent<Player>().explode();
+			GameObject newClone = (GameObject)Instantiate (clone, newPos, Quaternion.identity);
 		}
 		player.transform.position = Player.respawnLocation;
 		Player.direction = Player.respawnDirection;
@@ -51,9 +51,12 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void clearClones() {
+		Debug.Log ("whole function called");
 		foreach(GameObject clone in GameObject.FindGameObjectsWithTag("clone")) {
 			Destroy (clone);
+			Debug.Log ("being called");
 		}
 		player.GetComponent<Player>().GetComponent<Player>().dontMove = false;
+		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
 	}
 }
