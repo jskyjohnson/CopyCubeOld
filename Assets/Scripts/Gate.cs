@@ -6,15 +6,6 @@ public class Gate : MonoBehaviour {
 	public Material openMaterial;
 	public Material closedMaterial;
 	// Use this for initialization
-	void Start () {
-		if(open) {
-			gameObject.GetComponent<SkinnedMeshRenderer>().material = openMaterial;
-			GetComponent<BoxCollider>().isTrigger = true;
-		} else {
-			gameObject.GetComponent<SkinnedMeshRenderer>().material = closedMaterial;
-			GetComponent<BoxCollider>().isTrigger = false;
-		}
-	}
 
 	public void OnCollisionEnter(Collision coll) {
 		if(coll.gameObject.name == "Player" && !open) {

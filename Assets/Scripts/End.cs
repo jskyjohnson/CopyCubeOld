@@ -13,7 +13,7 @@ public class End : MonoBehaviour {
 	}
 	void OnTriggerEnter(Collider coll) {
 		if(coll.gameObject.name == "Player") {
-			coll.gameObject.transform.position = position;
+			coll.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
 			GameManager.started = false;
 			StartCoroutine(fly (coll.gameObject, nextLevel));
 			StartCoroutine(fadeObjects());

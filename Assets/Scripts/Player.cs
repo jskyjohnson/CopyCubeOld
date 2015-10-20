@@ -147,7 +147,16 @@ public class Player : MonoBehaviour {
 				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
 				yield return null;
 			} 
+		} else if (platform.name == "Gate" || platform.name == "Button") {
+			while(mat.color.a < 0.76f)
+			{
+				Color newColor = mat.color;
+				newColor.a += Time.deltaTime / duration;
+				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
+				yield return null;
+			}
 		} else {
+
 			while(mat.color.a < 1f)
 			{
 				Color newColor = mat.color;
