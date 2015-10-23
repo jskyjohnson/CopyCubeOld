@@ -56,6 +56,12 @@ public class GameManager : MonoBehaviour {
 			Destroy (clone);
 			Debug.Log ("being called");
 		}
+
+		foreach(GameObject button in GameObject.FindGameObjectsWithTag("Platform")) {
+			if(button.name == "Button") {
+				button.GetComponent<Button>().unpresss();
+			}
+		}
 		player.GetComponent<Player>().GetComponent<Player>().dontMove = false;
 		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
 	}

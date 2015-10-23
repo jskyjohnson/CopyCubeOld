@@ -55,4 +55,11 @@ public class Button : MonoBehaviour {
 			}
 		}
 	}
+
+	public void unpresss() {
+		GetComponent<SkinnedMeshRenderer>().material = openMaterial;
+		foreach(GameObject item in gates) {
+			item.GetComponent<Gate>().closeGate();
+		}
+	}
 }
