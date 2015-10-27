@@ -11,7 +11,7 @@ public class Star : MonoBehaviour {
 		gameObject.GetComponent<Rigidbody>().useGravity = false;
 		if(name == ("Star")) {
 			while (starCount > 0) {
-				Instantiate (gameObject, new Vector3(Random.Range (bottomLeftSpawnPos.x, topRightSpawnPos.x), Random.Range (bottomLeftSpawnPos.y, topRightSpawnPos.y)), camera.transform.rotation);
+				Instantiate (gameObject, new Vector3(Random.Range (bottomLeftSpawnPos.x, topRightSpawnPos.x), Random.Range (bottomLeftSpawnPos.y, topRightSpawnPos.y), Random.Range (bottomLeftSpawnPos.z, topRightSpawnPos.z)), camera.transform.rotation);
 				starCount --;
 			}
 		} else {
