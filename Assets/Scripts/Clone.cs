@@ -7,4 +7,10 @@ public class Clone : MonoBehaviour {
 			tag = "clone";
 		}
 	}
+
+	void OnTriggerEnter(Collider coll) {
+		if(coll.name == "ButtonChangeDirection" || coll.name == "DirectionSwitcher") {
+			Destroy (gameObject);
+		} 
+	}
 }
