@@ -9,14 +9,50 @@ public class GameManager : MonoBehaviour {
 	public GameObject startButton;
 	public GameObject playerFilter;
 	public GameObject clonesCount;
+	public bool paused;
+	public GameObject pausePanel;
+	public GameObject buttonContainer;
 	// Use this for initialization
 	void Start () {
 		playerFilter = GameObject.Find ("playerFilter");
+		paused = false;
+		started = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void pauseGame() {
+		if(paused == false) {
+			player.GetComponent<Rigidbody>().isKinematic = true;
+			paused = true;
+			StartCoroutine(pauseButtonsScrollUp());
+		} else if (paused == true) {
+			buttonContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -546f);
+			pausePanel.SetActive (false);
+			player.GetComponent<Rigidbody>().isKinematic = false;
+			paused = false;
+		}
+	}
+
+	IEnumerator pauseButtonsScrollUp() {
+		pausePanel.SetActive (true);
+		while(buttonContainer.GetComponent<RectTransform>().anchoredPosition.y != 0f) {
+			Vector2 newPos = Vector2.Lerp (buttonContainer.GetComponent<RectTransform>().anchoredPosition, new Vector2(0f, 0f), 0.2f);
+			buttonContainer.GetComponent<RectTransform>().anchoredPosition = newPos;
+			yield return 0;
+		}
+	}
+
+	public void loadMenu() {
+		Application.LoadLevel ("LevelSelector");
+	}
+
+	public void reload() {
+		Application.LoadLevel (Application.loadedLevelName);
+		GameManager.started = false;
 	}
 
 	public void respawn() {

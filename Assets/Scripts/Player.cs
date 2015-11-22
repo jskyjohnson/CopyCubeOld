@@ -124,43 +124,51 @@ public class Player : MonoBehaviour {
 				}
 			}
 			if(direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.right, out hit, 0.4f)) {
-					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-						Debug.Log ("something in +x direction");
-						//dontMove = true;
-						GetComponent<Collider>().material = unsticky;
-						thingsAround = true;
-						speed = 0f;
-					}
-			} else if(direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.left, out hit, 0.4f)) {
-					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-						Debug.Log(hit.collider.gameObject.name);
-						Debug.Log ("something in -x direction");
-						//dontMove = true;
-						GetComponent<Collider>().material = unsticky;
-						thingsAround = true;
-						speed = 0f;
-					}
-				} else if(direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.forward, out hit, 0.4f)) {
-					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-						Debug.Log ("something in +z direction");
-						//dontMove = true;
-						GetComponent<Collider>().material = unsticky;
-						thingsAround = true;
-						speed = 0f;
-					}
-			} else if(direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.back, out hit, 0.4f)) {
-					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-						Debug.Log ("something in -z direction");
-						//dontMove = true;
-						GetComponent<Collider>().material = unsticky;
-						thingsAround = true;
-						speed = 0f;
-					}
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+					Debug.Log ("something in +x direction");
+					//dontMove = true;
+					GetComponent<Collider>().material = unsticky;
+					thingsAround = true;
+					speed = 0f;
 				} else {
-					GetComponent<Collider>().material = sticky;
-					thingsAround = false;
+						speed = 5f;
+				}
+			} else if(direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.left, out hit, 0.4f)) {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+					Debug.Log(hit.collider.gameObject.name);
+					Debug.Log ("something in -x direction");
+					//dontMove = true;
+					GetComponent<Collider>().material = unsticky;
+					thingsAround = true;
+					speed = 0f;
+				} else {
+						speed = 5f;
+				}
+			} else if(direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.forward, out hit, 0.4f)) {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+					Debug.Log ("something in +z direction");
+					//dontMove = true;
+					GetComponent<Collider>().material = unsticky;
+					thingsAround = true;
+					speed = 0f;
+				} else {
 					speed = 5f;
 				}
+			} else if(direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.back, out hit, 0.4f)) {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+					Debug.Log ("something in -z direction");
+					//dontMove = true;
+					GetComponent<Collider>().material = unsticky;
+					thingsAround = true;
+					speed = 0f;
+				} else {
+					speed = 5f;
+				}
+			} else {
+				GetComponent<Collider>().material = sticky;
+				thingsAround = false;
+				speed = 5f;
+			}
 		} else {
 			//GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		}
