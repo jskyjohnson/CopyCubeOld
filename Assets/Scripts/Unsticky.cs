@@ -7,6 +7,6 @@ public class Unsticky : MonoBehaviour {
 	public GameObject player;
 	public PhysicMaterial unsticky;
 	void OnCollisionEnter(Collision coll) {
-		player.GetComponent<Collider>().material = unsticky;
+	//	player.GetComponent<Collider>().material = unsticky;
 	}
 }

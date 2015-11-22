@@ -7,12 +7,11 @@ public class GameManager : MonoBehaviour {
 	public static bool started;
 	public GameObject startPanel;
 	public GameObject startButton;
+	public GameObject playerFilter;
+	public GameObject clonesCount;
 	// Use this for initialization
-	void Awake() {
-		Application.targetFrameRate = 60;
-	}
 	void Start () {
-		started = false;
+		playerFilter = GameObject.Find ("playerFilter");
 	}
 	
 	// Update is called once per frame
@@ -28,24 +27,32 @@ public class GameManager : MonoBehaviour {
 		}
 		player.transform.position = Player.respawnLocation;
 		Player.direction = Player.respawnDirection;
-		player.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 		player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		player.GetComponent<Player>().dontMove = false;
 		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+		player.transform.rotation = Quaternion.Euler(Vector3.zero);
+		if(Player.direction == "+x" || Player.direction == "-x") {
+			player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
+		} else if(Player.direction == "+z" || Player.direction == "-z") {
+			player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+		}
+		addOneToCloneCount();
 	}
 
 	public void die() {
 		player.GetComponent<Player>().explode();
 		player.transform.position = Player.respawnLocation;
 		Player.direction = Player.respawnDirection;
-		player.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 		player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		player.GetComponent<Player>().dontMove = false;
 		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+		player.transform.rotation = Quaternion.Euler(Vector3.zero);
+		addOneToCloneCount();
 	}
 
 	public void start() {
 		started = true;
+		Destroy (GameObject.Find ("playerFiller"));
 		Destroy (startPanel);
 		Destroy (startButton);
 	}
@@ -59,10 +66,14 @@ public class GameManager : MonoBehaviour {
 
 		foreach(GameObject button in GameObject.FindGameObjectsWithTag("Platform")) {
 			if(button.name == "Button") {
-				button.GetComponent<Button>().unpresss();
+				button.GetComponent<GameButton>().unpresss();
 			}
 		}
 		player.GetComponent<Player>().GetComponent<Player>().dontMove = false;
 		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+	}
+
+	public void addOneToCloneCount() {
+		clonesCount.GetComponent<Text>().text = (int.Parse(clonesCount.GetComponent<Text>().text) + 1).ToString();
 	}
 }

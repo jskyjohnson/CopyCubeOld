@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Button : MonoBehaviour {
+public class GameButton : MonoBehaviour {
 	public bool pressed;
 	public Material openMaterial;
 	public Material closedMaterial;
 	public GameObject[] gates;
 	public GameObject player;
+	private bool targetHit;
 	private Vector3 position;
 	// Update is called once per frame
 	void Start () {
@@ -39,24 +40,29 @@ public class Button : MonoBehaviour {
 				item.GetComponent<Gate>().closeGate();
 			}
 		}*/
-
-		RaycastHit hit = new RaycastHit ();
-		if(Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.20f, transform.position.z), Vector3.up, out hit, 1.2f)) {
-			Debug.Log (hit.collider.gameObject.name);
-			if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)" && !pressed) {
-				GetComponent<SkinnedMeshRenderer>().material = closedMaterial;
-				foreach(GameObject item in gates) {
-					item.GetComponent<Gate>().openGate();
-				}
-				pressed = true;
+		RaycastHit[] hits;
+		hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.up, 1.2f);
+		Debug.Log (hits.Length);
+		foreach(RaycastHit hit in hits) {
+			Debug.Log (hit.collider.name);
+			if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)") {
+				targetHit = true;
 			}
-		} else if(pressed){
+		}
+		if(!pressed && targetHit) {
+			GetComponent<SkinnedMeshRenderer>().material = closedMaterial;
+			foreach(GameObject item in gates) {
+				item.GetComponent<Gate>().openGate();
+			}
+			pressed = true;
+		} else if(pressed && !targetHit){
 			pressed = false;
 			GetComponent<SkinnedMeshRenderer>().material = openMaterial;
 			foreach(GameObject item in gates) {
 				item.GetComponent<Gate>().closeGate();
 			}
 		}
+		targetHit = false;
 	}
 
 	void OnTriggerEnter(Collider coll) {

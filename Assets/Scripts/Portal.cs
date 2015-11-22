@@ -10,7 +10,7 @@ public class Portal : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider coll) {
-		if(linkedPortal && coll.name == "Player") {
+		if(linkedPortal) {
 			coll.gameObject.transform.position = linkedPortalLocation;
 		}
 	}

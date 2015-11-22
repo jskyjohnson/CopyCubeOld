@@ -7,6 +7,8 @@ public class End : MonoBehaviour {
 	GameObject[] taggedGameObjects;
 	float distance;
 	bool flying;
+	public int threeStarMax;
+	public int twoStarMax;
 	void Start() {
 		position = transform.position;
 		distance = 44f;
@@ -38,7 +40,22 @@ public class End : MonoBehaviour {
 		yield return new WaitForSeconds(0.5f);
 		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 30f, 0f);
 		yield return new WaitForSeconds(0.9f);
-		Application.LoadLevel (nextLevel);
+		PlayerPrefs.SetInt ("nextLevel", int.Parse(Application.loadedLevelName) + 1);
+		if(int.Parse(GameObject.Find ("Canvas").GetComponent<GameManager>().clonesCount.GetComponent<Text>().text) <= threeStarMax) {
+			PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 3);
+			PlayerPrefs.SetInt("PassedLevelStars", 3);
+		} else if (int.Parse(GameObject.Find ("Canvas").GetComponent<GameManager>().clonesCount.GetComponent<Text>().text) <= twoStarMax) {
+			if(PlayerPrefs.GetInt("levelStar" + Application.loadedLevelName) < 2) {
+				PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 2);
+			}
+			PlayerPrefs.SetInt("PassedLevelStars", 2);
+		} else {
+			if(PlayerPrefs.GetInt("levelStar" + Application.loadedLevelName) < 1) {
+				PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 1);
+			}
+			PlayerPrefs.SetInt("PassedLevelStars", 1);
+		}
+		Application.LoadLevel ("LevelSelector");
 	}
 
 	IEnumerator fadeObjects() {

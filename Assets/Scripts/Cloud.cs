@@ -10,7 +10,7 @@ public class Cloud : MonoBehaviour {
 
 	private bool left = true;
 	void Start () {
-		gameObject.GetComponent<Rigidbody>().velocity = new Vector3(Random.Range(2f, 0.5f), 0f, 0f);
+		gameObject.GetComponent<Rigidbody>().velocity = new Vector3(2f, 0f, 0f);
 		//transform.localScale = new Vector3(0.25f, Random.Range (1.5f, 2f), Random.Range(0.5f, 1f));
 		if(name == "Cloud") {
 			StartCoroutine(createClouds());

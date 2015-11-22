@@ -21,7 +21,7 @@ public class FadeInOut : MonoBehaviour {
 	IEnumerator FadeIn (GameObject item, float duration)
 	{
 		Material mat = item.GetComponent<MeshRenderer>().material;
-		while(mat.color.a < 0.4f)
+		while(mat.color.a < 0.26f)
 			{
 				Color newColor = mat.color;
 				newColor.a += Time.deltaTime / duration;

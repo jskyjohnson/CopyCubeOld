@@ -9,10 +9,10 @@ public class Player : MonoBehaviour {
 	public GameObject explosionParticle;
 	public float speed;
 	public float customFadeDistance;
-	public int jumpsAvailable;
 	public bool dontMove;
 	public PhysicMaterial sticky;
 	public PhysicMaterial unsticky;
+	private bool thingsAround = false;
 
 	Touch touch;
 	bool canRespawn;
@@ -21,7 +21,6 @@ public class Player : MonoBehaviour {
 	void Start () {
 		canRespawn = true;
 		dontMove = false;
-		jumpsAvailable = 1;
 		direction = "+x";
 		respawnLocation = new Vector3(0f, 4f, 0f);
 		respawnDirection = direction;
@@ -34,11 +33,26 @@ public class Player : MonoBehaviour {
 			platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
 		}
 	}
-	
+
+	bool IsGrounded () {
+		RaycastHit[] hits;
+		hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.25f, Vector3.down, 0.8f);
+		foreach(RaycastHit bang in hits) {
+			if(bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)") {
+				dontMove = false;
+				Debug.Log ("there is a cube or clone under");
+				if(thingsAround == false) {
+					GetComponent<Collider>().material = sticky;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 	// Update is called once per frame
 	void Update () {
 		if(GameManager.started) {
-			RaycastHit hit = new RaycastHit ();
+			RaycastHit hit;
 			if(direction == "+x") {
 		  		GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 				if(!dontMove) {
@@ -65,19 +79,18 @@ public class Player : MonoBehaviour {
 				currentPosition.x = Mathf.Round (transform.position.x);
 				transform.position = currentPosition;
 			} else if (direction == "-z") {
-		   		// transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0f, 0f));
 		    	GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 				if(!dontMove) {
-					Debug.Log ("adding force to -z direction");
 					GetComponent<Rigidbody>().velocity = new Vector3(0f, GetComponent<Rigidbody>().velocity.y, -speed);
 				}
 				Vector3 currentPosition = transform.position;
 				currentPosition.x = Mathf.Round (transform.position.x);
 				transform.position = currentPosition;
 			}
-			if(Input.GetKeyDown(KeyCode.UpArrow) && jumpsAvailable >= 1) {
-				jumpsAvailable --;
-				GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+			if(Input.GetKeyDown(KeyCode.UpArrow)) {
+				if(IsGrounded()) {
+					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+				}
 			}
 
 			if(Input.GetKeyDown(KeyCode.Space)) {
@@ -85,14 +98,15 @@ public class Player : MonoBehaviour {
 			}
 
 			foreach (Touch touch in Input.touches) {
-				if (touch.position.x < Screen.width/2 && canRespawn) {
+				if (touch.phase == TouchPhase.Began && touch.position.x < Screen.width/2 && canRespawn) {
 					canvas.GetComponent<GameManager>().respawn();
 					canRespawn = false;
 					StartCoroutine(resetTouch());
 				}
-				else if (touch.position.x > Screen.width/2 && jumpsAvailable >= 1) {
-					jumpsAvailable --;
-					GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+				else if (touch.phase == TouchPhase.Began && touch.position.x > Screen.width/2) {
+					if(IsGrounded()) {
+						GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+					}
 				} 
 			}
 			//check which blocks are close and fade in
@@ -103,14 +117,50 @@ public class Player : MonoBehaviour {
 				float distanceSqr = (objectPos - transform.position).sqrMagnitude;
 				if(customFadeDistance != 0) {
 					if (distanceSqr < customFadeDistance) {
-						StartCoroutine(FadeIn (platform, 1f));
+						StartCoroutine(FadeIn (platform, 0.4f));
 					}
 				} else if (distanceSqr < 53f) {
-					StartCoroutine(FadeIn (platform, 1f));
+					StartCoroutine(FadeIn (platform, 0.4f));
 				}
 			}
-
-
+			if(direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.right, out hit, 0.4f)) {
+					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+						Debug.Log ("something in +x direction");
+						//dontMove = true;
+						GetComponent<Collider>().material = unsticky;
+						thingsAround = true;
+						speed = 0f;
+					}
+			} else if(direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.left, out hit, 0.4f)) {
+					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+						Debug.Log(hit.collider.gameObject.name);
+						Debug.Log ("something in -x direction");
+						//dontMove = true;
+						GetComponent<Collider>().material = unsticky;
+						thingsAround = true;
+						speed = 0f;
+					}
+				} else if(direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.forward, out hit, 0.4f)) {
+					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+						Debug.Log ("something in +z direction");
+						//dontMove = true;
+						GetComponent<Collider>().material = unsticky;
+						thingsAround = true;
+						speed = 0f;
+					}
+			} else if(direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.back, out hit, 0.4f)) {
+					if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+						Debug.Log ("something in -z direction");
+						//dontMove = true;
+						GetComponent<Collider>().material = unsticky;
+						thingsAround = true;
+						speed = 0f;
+					}
+				} else {
+					GetComponent<Collider>().material = sticky;
+					thingsAround = false;
+					speed = 5f;
+				}
 		} else {
 			//GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		}
@@ -122,8 +172,7 @@ public class Player : MonoBehaviour {
 	}
 
 	public void jump() {
-		if(jumpsAvailable >= 1) {
-			jumpsAvailable --;
+		if(IsGrounded()) {
 			GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
 		}
 	}
@@ -131,6 +180,7 @@ public class Player : MonoBehaviour {
 	public IEnumerator FadeIn (GameObject platform, float duration)
 	{
 		Material mat = platform.GetComponentInChildren<SkinnedMeshRenderer>().material;
+		platform.tag = "Untagged";
 		if(platform.name == "End") {
 			while(mat.color.a < 0.3f)
 			{
@@ -179,46 +229,11 @@ public class Player : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision coll) {
-		if(coll.gameObject.name == "Cube" || coll.gameObject.name == "Clone(Clone)") {
-			RaycastHit hit = new RaycastHit ();
-			bool thingsAround = false;
-			if(direction == "+x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.right, out hit, 1.1f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-					Debug.Log ("something in +x direction");
-					//dontMove = true;
-					GetComponent<Collider>().material = unsticky;
-					thingsAround = true;
-				}
-			} else if(direction == "-x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.left, out hit, 1.1f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-					Debug.Log(hit.collider.gameObject.name);
-					Debug.Log ("something in -x direction");
-					//dontMove = true;
-					GetComponent<Collider>().material = unsticky;
-					thingsAround = true;
-				}
-			} else if(direction == "+z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.forward, out hit, 1.1f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-					Debug.Log ("something in +z direction");
-					//dontMove = true;
-					GetComponent<Collider>().material = unsticky;
-					thingsAround = true;
-				}
-			} else if(direction == "-z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.back, out hit, 1.1f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
-					Debug.Log ("something in -z direction");
-					//dontMove = true;
-					GetComponent<Collider>().material = unsticky;
-					thingsAround = true;
-				}
-			}
-			if(transform.position.y > coll.gameObject.transform.position.y + 0.3f) {
-				jumpsAvailable = 1;
-				dontMove = false;
-				if(thingsAround == false) {
-					GetComponent<Collider>().material = sticky;
-				}
-			}
+	}
+
+	void OnTriggerEnter(Collider coll) {
+		if(coll.name == "Snowball(Clone)" || coll.name == "Snowman") {
+			canvas.GetComponent<GameManager>().die();
 		}
 	}
 }
