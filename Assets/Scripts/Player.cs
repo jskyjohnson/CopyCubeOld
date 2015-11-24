@@ -117,10 +117,10 @@ public class Player : MonoBehaviour {
 				float distanceSqr = (objectPos - transform.position).sqrMagnitude;
 				if(customFadeDistance != 0) {
 					if (distanceSqr < customFadeDistance) {
-						StartCoroutine(FadeIn (platform, 0.4f));
+						StartCoroutine(FadeIn (platform, 0.23f));
 					}
 				} else if (distanceSqr < 53f) {
-					StartCoroutine(FadeIn (platform, 0.4f));
+					StartCoroutine(FadeIn (platform, 0.23f));
 				}
 			}
 			if(direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.right, out hit, 0.4f)) {
@@ -164,10 +164,16 @@ public class Player : MonoBehaviour {
 				} else {
 					speed = 5f;
 				}
-			} else {
-				GetComponent<Collider>().material = sticky;
-				thingsAround = false;
-				speed = 5f;
+			}  else {
+				if(Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.up, out hit, 0.8f)) {
+					GetComponent<Collider>().material = unsticky;
+					thingsAround = true;
+					speed = 5f;
+				} else {
+					GetComponent<Collider>().material = sticky;
+					thingsAround = false;
+					speed = 5f;
+				}
 			}
 		} else {
 			//GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);

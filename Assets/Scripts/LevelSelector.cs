@@ -31,7 +31,8 @@ public class LevelSelector : MonoBehaviour {
 				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
 			} else {
 				button.GetComponent<Image>().sprite = unknown;
-				Destroy(button.transform.GetChild(0).gameObject);
+				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();}); //debugging purposes
+				//Destroy(button.transform.GetChild(0).gameObject);
 			}
 		}
 		if(PlayerPrefs.GetInt("PassedLevelStars") == 0) {
@@ -72,7 +73,6 @@ public class LevelSelector : MonoBehaviour {
 	}
 
 	public void Next() {
-		Debug.Log ("going to level: " + PlayerPrefs.GetInt ("nextLevel"));
 		Application.LoadLevel(PlayerPrefs.GetInt ("nextLevel").ToString());
 	}
 

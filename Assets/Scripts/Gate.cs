@@ -15,10 +15,12 @@ public class Gate : MonoBehaviour {
 	// Update is called once per frame
 	public void openGate () {
 		gameObject.GetComponent<SkinnedMeshRenderer>().material = openMaterial;
+		open = true;
 		GetComponent<BoxCollider>().isTrigger = true;
 	}
 
 	public void closeGate() {
+		open = false;
 		gameObject.GetComponent<SkinnedMeshRenderer>().material = closedMaterial;
 		GetComponent<BoxCollider>().isTrigger = false;
 	}

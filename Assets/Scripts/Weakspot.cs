@@ -8,7 +8,7 @@ public class Weakspot : MonoBehaviour {
 	void OnTriggerEnter(Collider coll) {
 		if(coll.gameObject.name == "Player") {
 			Debug.Log ("called");
-			coll.gameObject.GetComponent<Rigidbody>().velocity = new Vector3(coll.gameObject.GetComponent<Rigidbody>().velocity.x, 20f, coll.gameObject.GetComponent<Rigidbody>().velocity.z);
+			//coll.gameObject.GetComponent<Rigidbody>().velocity = new Vector3(coll.gameObject.GetComponent<Rigidbody>().velocity.x, 20f, coll.gameObject.GetComponent<Rigidbody>().velocity.z);
 			StartCoroutine(die());
 		}
 	}

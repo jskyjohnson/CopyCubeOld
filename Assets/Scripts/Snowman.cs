@@ -19,6 +19,41 @@ public class Snowman : MonoBehaviour {
 		moveSpeed = 1f;
 		gunTip = new Vector3(gun.transform.position.x, gun.transform.position.y, gun.transform.position.z);
 		shooting = true;
+		RaycastHit hit;
+		if(moving) {
+			if(direction == "+x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.right, out hit, 7f)) {
+				if(hit.collider.name == "Player") {
+					Debug.Log ("setting shooting to true +x");
+					shooting = true;
+				} else {
+					shooting = false;
+				}
+			} else if (direction == "-x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.left, out hit, 7f)) {
+				if(hit.collider.name == "Player") {
+					Debug.Log ("setting shooting to true -x");
+					shooting = true;
+				} else {
+					shooting = false;
+				}
+			} else if (direction == "+z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.forward, out hit, 7f)) {
+				Debug.Log (hit.collider.name);
+				if(hit.collider.name == "Player") {
+					Debug.Log ("setting shooting to true +z");
+					shooting = true;
+				} else {
+					shooting = false;
+				}
+			} else if (direction == "-z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.back, out hit, 7f)) {
+				if(hit.collider.name == "Player") {
+					Debug.Log ("setting shooting to true -z");
+					shooting = true;
+				} else {
+					shooting = false;
+				}
+			} else {
+				shooting = false;
+			}
+		}
 		StartCoroutine(ShootCoroutine());
 		StartCoroutine(hoverAnim());
 	}

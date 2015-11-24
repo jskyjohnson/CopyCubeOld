@@ -15,6 +15,7 @@ public class ChangeDirectionButton : MonoBehaviour {
 		initialPosition = new Vector3(Mathf.Round(transform.position.x), transform.position.y, Mathf.Round(transform.position.z));
 		transform.position = initialPosition;
 		changePosition();
+		directionSwitcher.GetComponent<DirectionSwitcher>().direction = state;
 	}
 
 	void OnTriggerEnter(Collider coll) {

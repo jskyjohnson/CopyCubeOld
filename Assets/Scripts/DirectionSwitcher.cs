@@ -4,6 +4,7 @@ using System.Collections;
 public class DirectionSwitcher : MonoBehaviour {
 	public string direction;
 	public bool mobOnly;
+
 	void OnTriggerEnter(Collider coll) {
 		if(coll.name == "Player" && mobOnly != true) {
 			if(direction != Player.direction) {

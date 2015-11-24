@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameButton : MonoBehaviour {
 	public bool pressed;
+	public bool invertButton;
 	public Material openMaterial;
 	public Material closedMaterial;
 	public GameObject[] gates;
@@ -52,14 +53,22 @@ public class GameButton : MonoBehaviour {
 		if(!pressed && targetHit) {
 			GetComponent<SkinnedMeshRenderer>().material = closedMaterial;
 			foreach(GameObject item in gates) {
-				item.GetComponent<Gate>().openGate();
+				if(invertButton) {
+					item.GetComponent<Gate>().closeGate();
+				} else {
+					item.GetComponent<Gate>().openGate();
+				}
 			}
 			pressed = true;
 		} else if(pressed && !targetHit){
 			pressed = false;
 			GetComponent<SkinnedMeshRenderer>().material = openMaterial;
 			foreach(GameObject item in gates) {
-				item.GetComponent<Gate>().closeGate();
+				if(invertButton) {
+					item.GetComponent<Gate>().openGate();
+				} else {
+					item.GetComponent<Gate>().closeGate();
+				}
 			}
 		}
 		targetHit = false;

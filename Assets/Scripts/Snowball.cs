@@ -62,6 +62,11 @@ public class Snowball : MonoBehaviour {
 		if (coll.name == "Player" || coll.name == "Clone(Clone)" || coll.name == "Cube") {
 			Destroy(gameObject);
 		}
+		if(coll.name == "Gate") {
+			if(!coll.GetComponent<Gate>().open) {
+				Destroy(gameObject);
+			}
+		}
 	}
 
 	IEnumerator decay() {
