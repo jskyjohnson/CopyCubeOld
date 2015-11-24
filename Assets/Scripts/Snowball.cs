@@ -5,10 +5,12 @@ public class Snowball : MonoBehaviour {
 	public string direction;
 	public float bulletSpeed;
 	public GameObject energyParticle;
+	bool active;
 	Vector3 localPosition;
 	// Use this for initialization
 	void Start () {
 		transform.localScale = new Vector3(0f, 0f, 0f);
+		active = false;
 		StartCoroutine(buildAndShoot());
 		if(name == "Snowball(Clone)") {
 			StartCoroutine(decay ());
@@ -33,18 +35,29 @@ public class Snowball : MonoBehaviour {
 			gameObject.GetComponent<Rigidbody>().useGravity = false;
 			GetComponent<Rigidbody>().AddTorque(new Vector3(Random.Range(-360f, 360f), Random.Range(-360f, 360f), Random.Range(-360f, 360f)));
 			gameObject.GetComponent<BoxCollider>().isTrigger = true;
-			if(direction == "+x") {
-				GetComponent<Rigidbody>().velocity = new Vector3(bulletSpeed, 0f, 0f);
-			} else if (direction == "-x") {
-				GetComponent<Rigidbody>().velocity = new Vector3(-bulletSpeed, 0f, 0f);
-			} else if (direction == "+z") {
-				GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, bulletSpeed);
-			} else if (direction == "-z") {
-				GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, -bulletSpeed);
-			}
+			active = true;
 			yield return 0;
 		}
 	}
+
+	void Update() {
+		if(active) {
+			if(!GameObject.Find ("Canvas").GetComponent<GameManager>().paused) {
+				if(direction == "+x") {
+					GetComponent<Rigidbody>().velocity = new Vector3(bulletSpeed, 0f, 0f);
+				} else if (direction == "-x") {
+					GetComponent<Rigidbody>().velocity = new Vector3(-bulletSpeed, 0f, 0f);
+				} else if (direction == "+z") {
+					GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, bulletSpeed);
+				} else if (direction == "-z") {
+					GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, -bulletSpeed);
+				}
+			} else {
+				GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+			}
+		}
+	}
+
 	void OnTriggerEnter(Collider coll) {
 		if (coll.name == "Player" || coll.name == "Clone(Clone)" || coll.name == "Cube") {
 			Destroy(gameObject);

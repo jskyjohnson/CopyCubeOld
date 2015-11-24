@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
 			paused = true;
 			StartCoroutine(pauseButtonsScrollUp());
 		} else if (paused == true) {
+			StopCoroutine(pauseButtonsScrollUp());
 			buttonContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -546f);
 			pausePanel.SetActive (false);
 			player.GetComponent<Rigidbody>().isKinematic = false;
@@ -39,7 +40,7 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator pauseButtonsScrollUp() {
 		pausePanel.SetActive (true);
-		while(buttonContainer.GetComponent<RectTransform>().anchoredPosition.y != 0f) {
+		while(buttonContainer.GetComponent<RectTransform>().anchoredPosition.y <= -0.1f) {
 			Vector2 newPos = Vector2.Lerp (buttonContainer.GetComponent<RectTransform>().anchoredPosition, new Vector2(0f, 0f), 0.2f);
 			buttonContainer.GetComponent<RectTransform>().anchoredPosition = newPos;
 			yield return 0;
