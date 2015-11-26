@@ -12,10 +12,11 @@ public class LevelSelector : MonoBehaviour {
 	public Sprite noStar;
 	public Sprite unknown;
 	public Text compliment;
+	public GameObject scrollmap;
+	public Text coinsAdded;
 	// Use this for initialization
 	void Start () {
 		buttons = GameObject.FindGameObjectsWithTag("Button");
-		Debug.Log ("next level is: " + PlayerPrefs.GetInt ("nextLevel").ToString());
 		foreach(GameObject button in buttons) {
 			if(PlayerPrefs.GetInt("levelStar" + button.GetComponentInChildren<Text>().text) == 3) {
 				button.GetComponent<Image>().sprite = threeStar;
@@ -26,13 +27,18 @@ public class LevelSelector : MonoBehaviour {
 			} else if (PlayerPrefs.GetInt("levelStar" + button.GetComponentInChildren<Text>().text) == 1) {
 				button.GetComponent<Image>().sprite = oneStar;
 				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
-			} else if(PlayerPrefs.GetInt ("nextLevel").ToString() == button.GetComponentInChildren<Text>().text) {
+			} else if(PlayerPrefs.GetInt ("permaNextLevel").ToString() == button.GetComponentInChildren<Text>().text) {
 				button.GetComponent<Image>().sprite = noStar;
 				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
 			} else {
 				button.GetComponent<Image>().sprite = unknown;
-				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();}); //debugging purposes
-				//Destroy(button.transform.GetChild(0).gameObject);
+				if(button.transform.GetChild(0).gameObject.GetComponent<Text>().text == "0") {
+					button.GetComponent<Image>().sprite = noStar;
+					button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
+				} else {
+				//button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();}); //debugging purposes
+					Destroy(button.transform.GetChild(0).gameObject);
+				}
 			}
 		}
 		if(PlayerPrefs.GetInt("PassedLevelStars") == 0) {
@@ -62,14 +68,23 @@ public class LevelSelector : MonoBehaviour {
 			}
 			if(PlayerPrefs.GetInt("PassedLevelStars") == 3) {
 				compliment.text = "SUPERSTAR!";
+				coinsAdded.text = "+60";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 60);
 				StartCoroutine(BlinkText());
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 2) {
 				compliment.text = "Well Done";
+				coinsAdded.text = "+40";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 40);
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 1) {
-				compliment.text = "Good Job";
+				compliment.text = "You Can Do Better";
+				coinsAdded.text = "+20";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 20);
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 0);
 		}
+	}
+	public void Home() {
+		Application.LoadLevel ("Home");
 	}
 
 	public void Next() {

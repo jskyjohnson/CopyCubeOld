@@ -59,7 +59,7 @@ public class Snowball : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider coll) {
-		if (coll.name == "Player" || coll.name == "Clone(Clone)" || coll.name == "Cube") {
+		if (coll.name == "Player" || coll.name == "Clone(Clone)" || coll.name == "Cube" || coll.name == "IceCube") {
 			Destroy(gameObject);
 		}
 		if(coll.name == "Gate") {

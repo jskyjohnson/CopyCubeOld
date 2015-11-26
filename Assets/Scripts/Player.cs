@@ -14,11 +14,40 @@ public class Player : MonoBehaviour {
 	public PhysicMaterial unsticky;
 	private bool thingsAround = false;
 
+	//possibleSkins
+	public Material blueGuy;
+	public Material blueGuyFiller;
+	public Material whiteGuy;
+	public Material whiteGuyFiller;
+	public Material blackGuy;
+	public Material blackGuyFiller;
+	public Material iceSkin;
+	public Material gold;
+	public Material goldFiller;
+	public Material smoke;
+	public Material smile;
+	public Material ghostSkin;
+	public Material radioactive;
+	public Material drake;
+
 	Touch touch;
 	bool canRespawn;
 
 	private GameObject[] taggedGameObjects;
 	void Start () {
+		if(PlayerPrefs.GetString ("selectedBlueGuy") == "true") {
+			GetComponent<MeshRenderer>().material = blueGuy;
+			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
+		} else if (PlayerPrefs.GetString ("selectedWhiteGuy") == "true") {
+			GetComponent<MeshRenderer>().material = blueGuy;
+			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
+		} else if (PlayerPrefs.GetString ("selectedBlackGuy") == "true") {
+			GetComponent<MeshRenderer>().material = blueGuy;
+			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
+		} else if (PlayerPrefs.GetString ("selectedGold") == "true") {
+			GetComponent<MeshRenderer>().material = blueGuy;
+			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
+		} 
 		canRespawn = true;
 		dontMove = false;
 		direction = "+x";
@@ -38,7 +67,7 @@ public class Player : MonoBehaviour {
 		RaycastHit[] hits;
 		hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.25f, Vector3.down, 0.8f);
 		foreach(RaycastHit bang in hits) {
-			if(bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)") {
+			if(bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube") {
 				dontMove = false;
 				Debug.Log ("there is a cube or clone under");
 				if(thingsAround == false) {
@@ -124,7 +153,7 @@ public class Player : MonoBehaviour {
 				}
 			}
 			if(direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.right, out hit, 0.4f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)") {
 					Debug.Log ("something in +x direction");
 					//dontMove = true;
 					GetComponent<Collider>().material = unsticky;
@@ -134,7 +163,7 @@ public class Player : MonoBehaviour {
 						speed = 5f;
 				}
 			} else if(direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.left, out hit, 0.4f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)") {
 					Debug.Log(hit.collider.gameObject.name);
 					Debug.Log ("something in -x direction");
 					//dontMove = true;
@@ -145,7 +174,7 @@ public class Player : MonoBehaviour {
 						speed = 5f;
 				}
 			} else if(direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.forward, out hit, 0.4f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)") {
 					Debug.Log ("something in +z direction");
 					//dontMove = true;
 					GetComponent<Collider>().material = unsticky;
@@ -155,7 +184,7 @@ public class Player : MonoBehaviour {
 					speed = 5f;
 				}
 			} else if(direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.back, out hit, 0.4f)) {
-				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "Clone(Clone)") {
+				if(hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)") {
 					Debug.Log ("something in -z direction");
 					//dontMove = true;
 					GetComponent<Collider>().material = unsticky;
@@ -219,6 +248,14 @@ public class Player : MonoBehaviour {
 				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
 				yield return null;
 			}
+		} else if (platform.name == "IceCube") {
+			while(mat.color.a < 0.4f)
+			{
+				Color newColor = mat.color;
+				newColor.a += Time.deltaTime / duration;
+				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
+				yield return null;
+			}
 		} else {
 			while(mat.color.a < 1f)
 			{
@@ -242,11 +279,8 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision coll) {
-	}
-
 	void OnTriggerEnter(Collider coll) {
-		if(coll.name == "Snowball(Clone)" || coll.name == "Snowman") {
+		if(coll.name == "Snowball(Clone)" || coll.name == "Snowman" || coll.name == "Pylon") {
 			canvas.GetComponent<GameManager>().die();
 		}
 	}

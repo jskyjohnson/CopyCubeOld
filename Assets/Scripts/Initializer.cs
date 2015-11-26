@@ -18,6 +18,6 @@ public class Initializer : MonoBehaviour {
 	}
 	IEnumerator loadStart() {
 		yield return new WaitForSeconds(2.0f);
-		Application.LoadLevel ("LevelSelector");
+		Application.LoadLevel ("Home");
 	}
 }

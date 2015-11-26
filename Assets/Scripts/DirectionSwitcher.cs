@@ -71,5 +71,16 @@ public class DirectionSwitcher : MonoBehaviour {
 				coll.gameObject.GetComponent<Snowman>().direction = "-z";
 			}*/
 		}
+		if(coll.name == "Pylon") {
+			if(direction == "+x") {
+				coll.gameObject.GetComponent<Pylon>().direction = "+x";
+			} else if(direction == "+z") {
+				coll.gameObject.GetComponent<Pylon>().direction = "+z";
+			} else if(direction == "-x") {
+				coll.gameObject.GetComponent<Pylon>().direction = "-x";
+			} else if (direction == "-z") {
+				coll.gameObject.GetComponent<Pylon>().direction = "-z";
+			}
+		}
 	}
 }

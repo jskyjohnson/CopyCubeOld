@@ -42,6 +42,9 @@ public class End : MonoBehaviour {
 		yield return new WaitForSeconds(0.9f);
 		Debug.Log ("setting next level to: " + (int.Parse(Application.loadedLevelName) + 1));
 		PlayerPrefs.SetInt ("nextLevel", int.Parse(Application.loadedLevelName) + 1);
+		if(PlayerPrefs.GetInt ("permaNextLevel") < PlayerPrefs.GetInt ("nextLevel")) {
+			PlayerPrefs.SetInt ("permaNextLevel", PlayerPrefs.GetInt ("nextLevel"));
+		}
 		if(int.Parse(GameObject.Find ("Canvas").GetComponent<GameManager>().clonesCount.GetComponent<Text>().text) <= threeStarMax) {
 			PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 3);
 			PlayerPrefs.SetInt("PassedLevelStars", 3);
