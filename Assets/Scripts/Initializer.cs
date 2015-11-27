@@ -5,6 +5,8 @@ using System.Collections;
 
 public class Initializer : MonoBehaviour {
 	void Start () {
+		PlayerPrefs.SetInt ("coins", 1000);
+		PlayerPrefs.SetString ("PinkGuy", "true");
 		Application.targetFrameRate = 60;
 		if (this.gameObject.name == "Initializer") {
 		//	SoomlaStore.Initialize (new AppAssets ());

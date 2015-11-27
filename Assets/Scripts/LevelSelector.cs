@@ -68,17 +68,17 @@ public class LevelSelector : MonoBehaviour {
 			}
 			if(PlayerPrefs.GetInt("PassedLevelStars") == 3) {
 				compliment.text = "SUPERSTAR!";
-				coinsAdded.text = "+60";
-				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 60);
+				coinsAdded.text = "+30";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 30);
 				StartCoroutine(BlinkText());
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 2) {
 				compliment.text = "Well Done";
-				coinsAdded.text = "+40";
-				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 40);
+				coinsAdded.text = "+15";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 15);
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 1) {
 				compliment.text = "You Can Do Better";
-				coinsAdded.text = "+20";
-				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 20);
+				coinsAdded.text = "+10";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 10);
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 0);
 		}

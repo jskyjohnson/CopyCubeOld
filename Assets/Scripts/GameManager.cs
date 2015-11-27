@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
 		playerFilter = GameObject.Find ("playerFilter");
 		paused = false;
 		started = false;
+		player.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -88,6 +89,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void start() {
+		player.SetActive(true);
 		started = true;
 		Destroy (GameObject.Find ("playerFiller"));
 		Destroy (startPanel);

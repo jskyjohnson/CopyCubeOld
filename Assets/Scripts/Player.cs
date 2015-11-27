@@ -22,32 +22,72 @@ public class Player : MonoBehaviour {
 	public Material blackGuy;
 	public Material blackGuyFiller;
 	public Material iceSkin;
+	public Material iceSkinFiller;
 	public Material gold;
 	public Material goldFiller;
-	public Material smoke;
 	public Material smile;
+	public Material smileFiller;
 	public Material ghostSkin;
+	public Material ghostSkinFiller;
+	public Material smoke;
+	public Material smokeFiller;
 	public Material radioactive;
+	public Material radioactiveFiller;
 	public Material drake;
+	public Material drakeFiller;
 
 	Touch touch;
 	bool canRespawn;
 
 	private GameObject[] taggedGameObjects;
 	void Start () {
-		if(PlayerPrefs.GetString ("selectedBlueGuy") == "true") {
+		Debug.Log (PlayerPrefs.GetString ("selected"));
+		if(PlayerPrefs.GetString ("selected") == "BlueGuy") {
 			GetComponent<MeshRenderer>().material = blueGuy;
-			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
-		} else if (PlayerPrefs.GetString ("selectedWhiteGuy") == "true") {
-			GetComponent<MeshRenderer>().material = blueGuy;
-			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
-		} else if (PlayerPrefs.GetString ("selectedBlackGuy") == "true") {
-			GetComponent<MeshRenderer>().material = blueGuy;
-			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
-		} else if (PlayerPrefs.GetString ("selectedGold") == "true") {
-			GetComponent<MeshRenderer>().material = blueGuy;
-			GameObject.Find ("playerFilter").GetComponent<MeshRenderer>().material = blueGuyFiller;
-		} 
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = blueGuyFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = blueGuy;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = blueGuy;
+		} else if (PlayerPrefs.GetString ("selected") == "WhiteGuy") {
+			GetComponent<MeshRenderer>().material = whiteGuy;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = whiteGuyFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = whiteGuy;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = whiteGuy;
+		} else if (PlayerPrefs.GetString ("selected") == "BlackGuy") {
+			GetComponent<MeshRenderer>().material = blackGuy;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = blackGuyFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = blackGuy;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = blackGuy;
+		} else if (PlayerPrefs.GetString ("selected") == "Gold") {
+			GetComponent<MeshRenderer>().material = gold;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = goldFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = gold;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = gold;
+		} else if(PlayerPrefs.GetString ("selected") == "Ice") {
+			GetComponent<MeshRenderer>().material = iceSkin;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = iceSkinFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = iceSkin;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = iceSkin;
+		} else if(PlayerPrefs.GetString ("selected") == "Smile") {
+			GetComponent<MeshRenderer>().material = smile;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = smileFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = smile;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = smile;
+		} else if(PlayerPrefs.GetString ("selected") == "Ghost") {
+			GetComponent<MeshRenderer>().material = ghostSkin;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = ghostSkinFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = ghostSkin;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = ghostSkin;
+		} else if(PlayerPrefs.GetString ("selected") == "Radioactive") {
+			GetComponent<MeshRenderer>().material = radioactive;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = radioactiveFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = radioactive;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = radioactive;
+		}else if(PlayerPrefs.GetString ("selected") == "Drake") {
+			GetComponent<MeshRenderer>().material = drake;
+			GameObject.Find ("playerFiller").GetComponent<MeshRenderer>().material = drakeFiller;
+			GameObject.Find ("Clone").GetComponent<MeshRenderer>().material = drake;
+			GameObject.Find ("ExplosionParticle").GetComponent<MeshRenderer>().material = gold;
+		}
 		canRespawn = true;
 		dontMove = false;
 		direction = "+x";
