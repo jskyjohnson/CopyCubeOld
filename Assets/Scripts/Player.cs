@@ -45,6 +45,7 @@ public class Player : MonoBehaviour
     public float jumpvol;
 	Touch touch;
 	bool canRespawn;
+	bool delayIsGrounded;
 	private GameObject[] taggedGameObjects;
 	void Start () {
 		source = GetComponent<AudioSource>();
@@ -114,8 +115,11 @@ public class Player : MonoBehaviour
 
     bool IsGrounded()
     {
+		if(delayIsGrounded == true) {
+			return true;
+		}
         RaycastHit[] hits;
-        hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.25f, Vector3.down, 0.8f);
+		hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.35f, Vector3.down, 0.75f);
         foreach (RaycastHit bang in hits)
         {
             if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube")
@@ -184,12 +188,7 @@ public class Player : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (IsGrounded())
-                {
-                    source.PlayOneShot(jumpsound, jumpvol);
-                    Debug.Log("Playing Sound " + jumpsound);
-                    GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
-                }
+               jump ();
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -209,10 +208,7 @@ public class Player : MonoBehaviour
                 }
                 else if (touch.phase == TouchPhase.Began && touch.position.x > Screen.width / 2)
                 {
-                    if (IsGrounded())
-                    {
-                        GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
-                    }
+                    jump ();
                 }
             }
             //check which blocks are close and fade in
@@ -234,7 +230,7 @@ public class Player : MonoBehaviour
                     StartCoroutine(FadeIn(platform, 0.23f));
                 }
             }
-            if (direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.right, out hit, 0.4f))
+            if (direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.3f, Vector3.right, out hit, 0.4f))
             {
                 if (hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)")
                 {
@@ -249,7 +245,7 @@ public class Player : MonoBehaviour
                     speed = 5f;
                 }
             }
-            else if (direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.left, out hit, 0.4f))
+            else if (direction == "-x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.3f, Vector3.left, out hit, 0.4f))
             {
                 if (hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)")
                 {
@@ -265,7 +261,7 @@ public class Player : MonoBehaviour
                     speed = 5f;
                 }
             }
-            else if (direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.forward, out hit, 0.4f))
+            else if (direction == "+z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.3f, Vector3.forward, out hit, 0.4f))
             {
                 if (hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)")
                 {
@@ -280,7 +276,7 @@ public class Player : MonoBehaviour
                     speed = 5f;
                 }
             }
-            else if (direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.back, out hit, 0.4f))
+            else if (direction == "-z" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.3f, Vector3.back, out hit, 0.4f))
             {
                 if (hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)")
                 {
@@ -297,14 +293,13 @@ public class Player : MonoBehaviour
             }
             else
             {
-                if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.up, out hit, 0.8f))
-                {
+				if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.up, out hit, 0.8f) && hit.collider.name != "Gate")
+				{
                     GetComponent<Collider>().material = unsticky;
-                    thingsAround = true;
+                   	thingsAround = true;
                     speed = 5f;
                 }
-                else
-                {
+                else {
                     GetComponent<Collider>().material = sticky;
                     thingsAround = false;
                     speed = 5f;
@@ -327,9 +322,17 @@ public class Player : MonoBehaviour
     {
         if (IsGrounded())
         {
+			source.PlayOneShot(jumpsound, jumpvol);
+			Debug.Log("Playing Sound " + jumpsound);
             GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
         }
     }
+
+	IEnumerator keepIsGrounded() {
+		delayIsGrounded = true;
+		yield return new WaitForSeconds(0.5f);
+		delayIsGrounded = false;
+	}
 
     public IEnumerator FadeIn(GameObject platform, float duration)
     {
@@ -365,7 +368,7 @@ public class Player : MonoBehaviour
                 yield return null;
             }
         }
-        else if (platform.name == "IceCube")
+		else if (platform.name == "IceCube" || platform.name == "IceSpike")
         {
             while (mat.color.a < 0.4f)
             {

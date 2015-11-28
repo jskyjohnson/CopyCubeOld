@@ -7,6 +7,7 @@ public class CameraController : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	public Transform target;
 	public float rotSpeed;
+	public bool frozen;
 	private float currentAngle;
 	private float distance;
 	void Start () {
@@ -17,7 +18,7 @@ public class CameraController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (target)
+		if (target && !frozen)
 		{
 			//handle movement of camera;
 			Vector3 point = GetComponent<Camera>().WorldToViewportPoint(target.position);

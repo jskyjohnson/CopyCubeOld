@@ -5,6 +5,7 @@ public class Pylon : MonoBehaviour {
 	public GameObject snowball;
 	public string direction;
 	public bool moving;
+	public bool smart;
 	public float moveSpeed;
 	public GameObject body;
 	float currentSpeed;
@@ -17,22 +18,22 @@ public class Pylon : MonoBehaviour {
 		moveSpeed = 0.5f;
 		shooting = true;
 		RaycastHit hit;
-		if(moving) {
-			if(direction == "+x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.right, out hit, 7f)) {
+		if(moving || smart) {
+			if(direction == "+x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.right, out hit, 14f)) {
 				if(hit.collider.name == "Player") {
 					Debug.Log ("setting shooting to true +x");
 					shooting = true;
 				} else {
 					shooting = false;
 				}
-			} else if (direction == "-x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.left, out hit, 7f)) {
+			} else if (direction == "-x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.left, out hit, 14f)) {
 				if(hit.collider.name == "Player") {
 					Debug.Log ("setting shooting to true -x");
 					shooting = true;
 				} else {
 					shooting = false;
 				}
-			} else if (direction == "+z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.forward, out hit, 7f)) {
+			} else if (direction == "+z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.forward, out hit, 14f)) {
 				Debug.Log (hit.collider.name);
 				if(hit.collider.name == "Player") {
 					Debug.Log ("setting shooting to true +z");
@@ -40,7 +41,7 @@ public class Pylon : MonoBehaviour {
 				} else {
 					shooting = false;
 				}
-			} else if (direction == "-z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.back, out hit, 7f)) {
+			} else if (direction == "-z" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.back, out hit, 14f)) {
 				if(hit.collider.name == "Player") {
 					Debug.Log ("setting shooting to true -z");
 					shooting = true;
@@ -70,7 +71,7 @@ public class Pylon : MonoBehaviour {
 			GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		}
 		RaycastHit hit;
-		if(moving) {
+		if(moving || smart) {
 			if(direction == "+x" && Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Vector3.right, out hit, 7f)) {
 				if(hit.collider.name == "Player") {
 					Debug.Log ("setting shooting to true +x");
@@ -141,7 +142,7 @@ public class Pylon : MonoBehaviour {
 			currentColor = mat.color;
 			mat.color = Color.Lerp (currentColor, targetColor, 0.5f);
 			body.GetComponent<SkinnedMeshRenderer>().material = mat;
-			yield return new WaitForSeconds(0.03f);
+			yield return new WaitForSeconds(0.01f);
 		}
 	}
 	

@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour {
 			player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 		}
 		addOneToCloneCount();
+		StartCoroutine(freezeCamera(0.2f));
 	}
 
 	public void die() {
@@ -86,6 +87,7 @@ public class GameManager : MonoBehaviour {
 		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
 		player.transform.rotation = Quaternion.Euler(Vector3.zero);
 		addOneToCloneCount();
+		StartCoroutine(freezeCamera(1f));
 	}
 
 	public void start() {
@@ -114,5 +116,13 @@ public class GameManager : MonoBehaviour {
 
 	public void addOneToCloneCount() {
 		clonesCount.GetComponent<Text>().text = (int.Parse(clonesCount.GetComponent<Text>().text) + 1).ToString();
+	}
+
+	IEnumerator freezeCamera(float time) {
+		Camera.main.GetComponent<CameraController>().frozen = true;
+		player.GetComponent<Rigidbody>().isKinematic = true;
+		yield return new WaitForSeconds(time);
+		Camera.main.GetComponent<CameraController>().frozen = false;
+		player.GetComponent<Rigidbody>().isKinematic = false;
 	}
 }
