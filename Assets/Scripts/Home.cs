@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using ChartboostSDK;
 public class Home : MonoBehaviour {
 	public Text text;
 
@@ -27,7 +28,10 @@ public class Home : MonoBehaviour {
 	public Sprite Drake;
 
 	public GameObject selectButton;
+	public GameObject promoCodePanel;
 	void Start() {
+		Chartboost.cacheInterstitial (CBLocation.Default);
+		Chartboost.cacheRewardedVideo(CBLocation.Default);
 		text.text = PlayerPrefs.GetInt ("coins").ToString();
 		int bttnLength = bttn.Length;
 		distance = new float[bttnLength];
@@ -86,7 +90,7 @@ public class Home : MonoBehaviour {
 					selectedButton.GetComponent<Image>().sprite = WhiteGuy;
 				} else if (splitString[0] == "BlackGuy") {
 					selectedButton.GetComponent<Image>().sprite = BlackGuy;
-				} else if (splitString[0] == "Gold") {
+				} else if (splitString[0] == "Gold") {Chartboost.cacheInterstitial (CBLocation.Default);
 					selectedButton.GetComponent<Image>().sprite = Gold;
 				} else if (splitString[0] == "Ice") {
 					selectedButton.GetComponent<Image>().sprite = Ice;
@@ -125,6 +129,28 @@ public class Home : MonoBehaviour {
 
 	public void LevelSelect() {
 		Application.LoadLevel("LevelSelector");
+	}
+
+	public void checkIfPromoCodeIsCorrect(string code) {
+		if(code == "JYtest") {
+			if(PlayerPrefs.GetString ("JYtest") != "true") {
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 1000);
+				text.text = PlayerPrefs.GetInt ("coins").ToString();
+				PlayerPrefs.SetString ("JYtest", "true");
+			}
+		}
+	}
+
+	public void runVideoAd() {
+		ChartboostExample.runAddCoinsAd();
+	}
+
+	public void closePromoCode() {
+		promoCodePanel.SetActive(false);
+	}
+
+	public void openPromoCode() {
+		promoCodePanel.SetActive(true);
 	}
 
 }

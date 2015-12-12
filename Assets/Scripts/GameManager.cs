@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using ChartboostSDK;
 public class GameManager : MonoBehaviour {
 	public GameObject player;
 	public GameObject clone;
@@ -12,23 +13,40 @@ public class GameManager : MonoBehaviour {
 	public bool paused;
 	public GameObject pausePanel;
 	public GameObject buttonContainer;
+	private float timePlayed;
+	private bool playerCanDie;
 	// Use this for initialization
 	void Start () {
+		Chartboost.cacheInterstitial (CBLocation.Default);
+		showAdOnRightCondition();
 		playerFilter = GameObject.Find ("playerFilter");
 		paused = false;
 		started = false;
 		player.SetActive(false);
+		timePlayed = 0f;
+		playerCanDie = true;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void FixedUpdate () {
+		timePlayed += Time.deltaTime;
+	}
+
+	public void endGameTime() {
+		PlayerPrefs.SetFloat ("timePlayed", PlayerPrefs.GetFloat ("timePlayed") + timePlayed);
+	}
+	public static void showAdOnRightCondition() {
+		if(PlayerPrefs.GetFloat ("timePlayed") > 90f) {
+			ChartboostExample.runAd();
+		}
 	}
 
 	public void pauseGame() {
+		PlayerPrefs.SetFloat ("timePlayed", PlayerPrefs.GetFloat ("timePlayed") + timePlayed);
 		if(paused == false) {
 			player.GetComponent<Rigidbody>().isKinematic = true;
 			paused = true;
+			showAdOnRightCondition();
 			StartCoroutine(pauseButtonsScrollUp());
 		} else if (paused == true) {
 			StopCoroutine(pauseButtonsScrollUp());
@@ -58,36 +76,85 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void respawn() {
-		Vector3 newPos = new Vector3(Mathf.Round (player.transform.position.x), Mathf.Round (player.transform.position.y), Mathf.Round (player.transform.position.z));
-		if(newPos != Player.respawnLocation) {
-			player.GetComponent<Player>().explode();
-			GameObject newClone = (GameObject)Instantiate (clone, newPos, Quaternion.identity);
+		if(playerCanDie) {
+			Vector3 newPos = new Vector3(Mathf.Round (player.transform.position.x), Mathf.Round (player.transform.position.y), Mathf.Round (player.transform.position.z));
+			if(newPos != Player.respawnLocation) {
+				player.GetComponent<Player>().explode();
+				GameObject newClone = (GameObject)Instantiate (clone, newPos, Quaternion.identity);
+			}
+			player.transform.position = Player.respawnLocation;
+			player.GetComponent<Player>().inverted = Player.respawnInverted;
+			Player.direction = Player.respawnDirection;
+			if(Player.respawnInverted) {
+				Physics.gravity = new Vector3(0, 50f, 0);
+			} else {
+				Physics.gravity = new Vector3(0, -50f, 0);
+			}
+			player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+			player.GetComponent<Player>().dontMove = false;
+			player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+			player.transform.rotation = Quaternion.Euler(Vector3.zero);
+			if(Player.direction == "+x" || Player.direction == "-x") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
+			} else if(Player.direction == "+z" || Player.direction == "-z") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			}
+			addOneToCloneCount();
+			StartCoroutine(resetDeath());
+			StartCoroutine(freezeCamera(0.2f));
 		}
-		player.transform.position = Player.respawnLocation;
-		Player.direction = Player.respawnDirection;
-		player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
-		player.GetComponent<Player>().dontMove = false;
-		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
-		player.transform.rotation = Quaternion.Euler(Vector3.zero);
-		if(Player.direction == "+x" || Player.direction == "-x") {
-			player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
-		} else if(Player.direction == "+z" || Player.direction == "-z") {
-			player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+	}
+
+	public void resetPlayer() {
+		if(playerCanDie) {
+			Vector3 newPos = new Vector3(Mathf.Round (player.transform.position.x), Mathf.Round (player.transform.position.y), Mathf.Round (player.transform.position.z));
+			player.transform.position = Player.respawnLocation;
+			player.GetComponent<Player>().inverted = Player.respawnInverted;
+			Player.direction = Player.respawnDirection;
+			if(Player.respawnInverted) {
+				Physics.gravity = new Vector3(0, 50f, 0);
+			} else {
+				Physics.gravity = new Vector3(0, -50f, 0);
+			}
+			player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+			player.GetComponent<Player>().dontMove = false;
+			player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+			player.transform.rotation = Quaternion.Euler(Vector3.zero);
+			if(Player.direction == "+x" || Player.direction == "-x") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
+			} else if(Player.direction == "+z" || Player.direction == "-z") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			}
+			StartCoroutine(resetDeath());
+			StartCoroutine(freezeCamera(0.1f));
 		}
-		addOneToCloneCount();
-		StartCoroutine(freezeCamera(0.2f));
 	}
 
 	public void die() {
-		player.GetComponent<Player>().explode();
-		player.transform.position = Player.respawnLocation;
-		Player.direction = Player.respawnDirection;
-		player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
-		player.GetComponent<Player>().dontMove = false;
-		player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
-		player.transform.rotation = Quaternion.Euler(Vector3.zero);
-		addOneToCloneCount();
-		StartCoroutine(freezeCamera(1f));
+		if(playerCanDie) {
+			player.GetComponent<Player>().explode();
+			player.GetComponent<Player>().inverted = Player.respawnInverted;
+			if(Player.respawnInverted) {
+				Physics.gravity = new Vector3(0, 50f, 0);
+			} else {
+				Physics.gravity = new Vector3(0, -50f, 0);
+			}
+			player.transform.position = Player.respawnLocation;
+			Player.direction = Player.respawnDirection;
+			player.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+			player.GetComponent<Player>().dontMove = false;
+			player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
+			player.transform.rotation = Quaternion.Euler(Vector3.zero);
+			addOneToCloneCount();
+			StartCoroutine(freezeCamera(1f));
+			StartCoroutine(resetDeath());
+		}
+	}
+
+	IEnumerator resetDeath() {
+		playerCanDie = false;
+		yield return new WaitForSeconds(0.5f);
+		playerCanDie = true;
 	}
 
 	public void start() {

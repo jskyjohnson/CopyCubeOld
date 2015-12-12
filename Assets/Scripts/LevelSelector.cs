@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using ChartboostSDK;
 public class LevelSelector : MonoBehaviour {
 	public GameObject[] buttons;
 	public GameObject ratingContainer;
@@ -16,6 +17,8 @@ public class LevelSelector : MonoBehaviour {
 	public Text coinsAdded;
 	// Use this for initialization
 	void Start () {
+		Chartboost.cacheInterstitial (CBLocation.Default);
+		GameManager.showAdOnRightCondition();
 		buttons = GameObject.FindGameObjectsWithTag("Button");
 		foreach(GameObject button in buttons) {
 			if(PlayerPrefs.GetInt("levelStar" + button.GetComponentInChildren<Text>().text) == 3) {
@@ -67,7 +70,7 @@ public class LevelSelector : MonoBehaviour {
 				}
 			}
 			if(PlayerPrefs.GetInt("PassedLevelStars") == 3) {
-				compliment.text = "PERFECT!";
+				compliment.text = "SUPERSTAR!";
 				coinsAdded.text = "+30";
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 30);
 				StartCoroutine(BlinkText());

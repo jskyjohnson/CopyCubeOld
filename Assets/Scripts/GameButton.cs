@@ -7,14 +7,18 @@ public class GameButton : MonoBehaviour {
 	public Material openMaterial;
 	public Material closedMaterial;
 	public GameObject[] gates;
-	public GameObject player;
+	public bool inverted;
 	private bool targetHit;
 	private Vector3 position;
 	// Update is called once per frame
 	void Start () {
 		position = new Vector3(Mathf.Round (transform.position.x), Mathf.Round (transform.position.y), Mathf.Round(transform.position.z));
 		pressed = false;
-		transform.position = new Vector3(transform.position.x, transform.position.y - 0.01f, transform.position.z);
+		if(!inverted) {
+			transform.position = new Vector3(transform.position.x, transform.position.y - 0.01f, transform.position.z);
+		} else {
+			transform.position = new Vector3(transform.position.x, transform.position.y + 0.01f, transform.position.z);
+		}
 	}
 	void Update () {
 		/*
@@ -41,13 +45,25 @@ public class GameButton : MonoBehaviour {
 				item.GetComponent<Gate>().closeGate();
 			}
 		}*/
-		RaycastHit[] hits;
-		hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.up, 1.2f);
-		Debug.Log (hits.Length);
-		foreach(RaycastHit hit in hits) {
-			Debug.Log (hit.collider.name);
-			if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)") {
-				targetHit = true;
+		if(!inverted) {
+			RaycastHit[] hits;
+			hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.up, 1.2f);
+			Debug.Log (hits.Length);
+			foreach(RaycastHit hit in hits) {
+				Debug.Log (hit.collider.name);
+				if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)") {
+					targetHit = true;
+				}
+			}
+		} else {
+			RaycastHit[] hits;
+			hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z), Vector3.down, 1.2f);
+			Debug.Log (hits.Length);
+			foreach(RaycastHit hit in hits) {
+				Debug.Log (hit.collider.name);
+				if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)") {
+					targetHit = true;
+				}
 			}
 		}
 		if(!pressed && targetHit) {
@@ -60,7 +76,7 @@ public class GameButton : MonoBehaviour {
 				}
 			}
 			pressed = true;
-		} else if(pressed && !targetHit){
+		} else if(!targetHit){
 			pressed = false;
 			GetComponent<SkinnedMeshRenderer>().material = openMaterial;
 			foreach(GameObject item in gates) {

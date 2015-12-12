@@ -26,6 +26,15 @@ public class DirectionSwitcher : MonoBehaviour {
 				GameObject.Find ("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 		}
+		if(coll.name == "FakePlayer") {
+			if(direction == "+x") {
+				coll.gameObject.GetComponent<FakeHomePlayer>().direction = "+x";
+				coll.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+			} else if(direction == "+z") {
+				coll.gameObject.GetComponent<FakeHomePlayer>().direction = "+z";
+				coll.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+			}
+		}
 		if(coll.name == "Snowman") {
 			if(direction == "+x") {
 				coll.gameObject.GetComponent<Snowman>().direction = "+x";

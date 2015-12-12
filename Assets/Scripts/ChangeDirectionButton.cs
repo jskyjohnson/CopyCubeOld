@@ -22,6 +22,7 @@ public class ChangeDirectionButton : MonoBehaviour {
 		if(coll.name == "Player" && canActivate) {
 			canActivate = false;
 			StartCoroutine(delayStateChange());
+			GameObject.Find("Canvas").GetComponent<GameManager>().resetPlayer();
 		}
 	}
 

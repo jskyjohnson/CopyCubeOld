@@ -12,6 +12,7 @@ public class End : MonoBehaviour {
 	void Start() {
 		position = transform.position;
 		distance = 44f;
+		GameObject.Find ("Canvas").GetComponent<GameManager>().endGameTime();
 	}
 	void OnTriggerEnter(Collider coll) {
 		if(coll.gameObject.name == "Player") {
@@ -32,6 +33,7 @@ public class End : MonoBehaviour {
 	}
 
 	IEnumerator fly(GameObject item, string nextLevel) {
+		Destroy(GameObject.Find ("Player").GetComponent<Collider>());
 		flying = true;
 		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform"); 
 		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 2f, 0f);

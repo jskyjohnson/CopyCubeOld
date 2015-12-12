@@ -10,6 +10,7 @@ public class Checkpoint : MonoBehaviour {
 		if(coll.name == "Player") {
 			Player.respawnDirection = Player.direction;
 			Player.respawnLocation = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+			Player.respawnInverted = coll.gameObject.GetComponent<Player>().inverted;
 			StartCoroutine(shrink());
 		}
 	}

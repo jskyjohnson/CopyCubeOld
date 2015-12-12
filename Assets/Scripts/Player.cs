@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public static string direction;
     public static string respawnDirection;
     public static Vector3 respawnLocation;
+	public static bool respawnInverted;
     public GameObject explosionParticle;
     public float speed;
     public float customFadeDistance;
@@ -46,8 +47,17 @@ public class Player : MonoBehaviour
 	Touch touch;
 	bool canRespawn;
 	bool delayIsGrounded;
+	public bool isStuck;
+	public bool immuneToStuck;
+	public bool inverted;
+	float timePassed;
+	bool isTouchingObject;
 	private GameObject[] taggedGameObjects;
 	void Start () {
+		timePassed = 0f;
+		respawnInverted = false;
+		inverted = false;
+		isStuck = false;
 		source = GetComponent<AudioSource>();
 		source.PlayOneShot(spawnsound, 1f);
 
@@ -104,6 +114,7 @@ public class Player : MonoBehaviour
 		respawnLocation = new Vector3(0f, 4f, 0f);
 		respawnDirection = direction;
 		Physics.gravity = new Vector3(0, -50f, 0);
+		isTouchingObject = false;
 		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform");
 		foreach(GameObject platform in taggedGameObjects) {
 			Material mat = platform.GetComponentInChildren<SkinnedMeshRenderer>().material;
@@ -119,21 +130,32 @@ public class Player : MonoBehaviour
 			return true;
 		}
         RaycastHit[] hits;
-		hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.35f, Vector3.down, 0.75f);
-        foreach (RaycastHit bang in hits)
-        {
-            if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube")
-            {
-                dontMove = false;
-                Debug.Log("there is a cube or clone under");
-                if (thingsAround == false)
-                {
-                    GetComponent<Collider>().material = sticky;
-                }
-                return true;
-            }
-        }
-        return false;
+		if(!inverted) {
+			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.down, 0.70f);
+    	    foreach (RaycastHit bang in hits) {
+				Debug.Log (transform.position.y - 0.80f - bang.collider.transform.position.y);
+       	    	if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube" && bang.collider.transform.position.y <= transform.position.y - 0.80f) {
+                	dontMove = false;
+               		if (thingsAround == false) {
+                	    GetComponent<Collider>().material = sticky;
+               		}
+               		return true;
+            	}
+       		}
+        	return false;
+		} else {
+			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.up, 0.70f);
+			foreach (RaycastHit bang in hits) {
+				if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube" && bang.collider.transform.position.y >= transform.position.y + 0.80f) {
+					dontMove = false;
+					if (thingsAround == false) {
+						GetComponent<Collider>().material = sticky;
+					}
+					return true;
+				}
+			}
+			return false;
+		}
     }
     // Update is called once per frame
     void Update()
@@ -225,7 +247,7 @@ public class Player : MonoBehaviour
                         StartCoroutine(FadeIn(platform, 0.23f));
                     }
                 }
-                else if (distanceSqr < 53f)
+                else if (distanceSqr < 47f)
                 {
                     StartCoroutine(FadeIn(platform, 0.23f));
                 }
@@ -293,20 +315,31 @@ public class Player : MonoBehaviour
             }
             else
             {
-				if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.up, out hit, 0.8f) && hit.collider.name != "Gate")
-				{
-                    GetComponent<Collider>().material = unsticky;
-                   	thingsAround = true;
-                    speed = 5f;
-                }
-                else {
-                    GetComponent<Collider>().material = sticky;
-                    thingsAround = false;
-                    speed = 5f;
-                }
-            }
-        }
-        else
+				if(!inverted) {
+					if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.up, out hit, 0.8f) && hit.collider.name != "Gate")
+						{
+               			     GetComponent<Collider>().material = unsticky;
+							thingsAround = true;
+							speed = 5f;
+               		 } else {
+                  	 	 GetComponent<Collider>().material = sticky;
+                  	 	 thingsAround = false;
+                  	 	 speed = 5f;
+                	}
+				} else {
+					if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.24f, Vector3.down, out hit, 0.8f) && hit.collider.name != "Gate")
+					{
+						GetComponent<Collider>().material = unsticky;
+						thingsAround = true;
+						speed = 5f;
+					} else {
+						GetComponent<Collider>().material = sticky;
+						thingsAround = false;
+						speed = 5f;
+					}
+				}
+        	}
+      	  } else
         {
             //GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
         }
@@ -318,22 +351,32 @@ public class Player : MonoBehaviour
         canRespawn = true;
     }
 
+	IEnumerator StuckImmunity() {
+		GetComponent<Rigidbody>().isKinematic = false;
+		immuneToStuck = true;
+		isStuck = false;
+		yield return new WaitForSeconds(0.2f);
+		immuneToStuck = false;
+	}
+
     public void jump()
     {
-        if (IsGrounded())
+		if(isStuck) {
+			StartCoroutine(StuckImmunity());
+		}
+		Debug.Log (IsGrounded());
+        if (IsGrounded()) //|| isTouchingObject)
         {
 			source.PlayOneShot(jumpsound, jumpvol);
 			Debug.Log("Playing Sound " + jumpsound);
-            GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+			if(!inverted) {
+           		GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);
+			} else {
+				GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, -20f, GetComponent<Rigidbody>().velocity.z);
+			}
+			transform.Rotate(Vector3.zero);
         }
     }
-
-	IEnumerator keepIsGrounded() {
-		delayIsGrounded = true;
-		yield return new WaitForSeconds(0.5f);
-		delayIsGrounded = false;
-	}
-
     public IEnumerator FadeIn(GameObject platform, float duration)
     {
         Material mat = platform.GetComponentInChildren<SkinnedMeshRenderer>().material;
@@ -348,7 +391,7 @@ public class Player : MonoBehaviour
                 yield return null;
             }
         }
-        else if (platform.name == "Checkpoint")
+        else if (platform.name == "Checkpoint" || platform.name == "Inverter")
         {
             while (mat.color.a < 0.5f)
             {
@@ -405,6 +448,21 @@ public class Player : MonoBehaviour
             GameObject newParticle = (GameObject)Instantiate(explosionParticle, transform.position, Quaternion.identity);
         }
     }
+
+	void OnCollisionStay(Collision coll) {
+		timePassed += Time.deltaTime;
+		if(coll.gameObject.name == "Cube" || coll.gameObject.name == "Clone(Clone)" && timePassed > 0.6f && coll.gameObject.transform.position.y < transform.position.y - 0.45f) {
+			timePassed = 0f;
+			isTouchingObject = true;
+		}
+	}
+
+	void OnCollisionExit(Collision coll) {
+		if(coll.gameObject.name == "Cube" || coll.gameObject.name == "Clone(Clone)") {
+			timePassed = 0f;
+			isTouchingObject = false;
+		}
+	}
 
     void OnTriggerEnter(Collider coll)
     {
