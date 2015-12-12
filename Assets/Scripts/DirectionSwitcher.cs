@@ -80,6 +80,21 @@ public class DirectionSwitcher : MonoBehaviour {
 				coll.gameObject.GetComponent<Snowman>().direction = "-z";
 			}*/
 		}
+		if(coll.name == "Turkey") {
+			if(direction == "+x") {
+				coll.gameObject.GetComponent<Turkey>().direction = "+x";
+				coll.transform.rotation = Quaternion.LookRotation(new Vector3(1f, 0f, 0f));
+			} else if(direction == "+z") {
+				coll.gameObject.GetComponent<Turkey>().direction = "+z";
+				coll.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 0f, 1f));
+			} else if(direction == "-x") {
+				coll.gameObject.GetComponent<Turkey>().direction = "-x";
+				coll.transform.rotation = Quaternion.LookRotation(new Vector3(-1f, 0f, 0f));
+			} else if (direction == "-z") {
+				coll.gameObject.GetComponent<Turkey>().direction = "-z";
+				coll.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 0f, -1f));
+			}
+		}
 		if(coll.name == "Pylon") {
 			if(direction == "+x") {
 				coll.gameObject.GetComponent<Pylon>().direction = "+x";
