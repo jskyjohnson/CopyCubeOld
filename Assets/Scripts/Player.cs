@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
     //Audiorelated
     private AudioSource source;
     public AudioClip jumpsound;
+    public AudioClip killPlylon;
+    public AudioClip killSnowman;
     public AudioClip respawnsound;
     public AudioClip spawnsound;
     public float jumpvol;
@@ -469,6 +471,13 @@ public class Player : MonoBehaviour
     {
         if (coll.name == "Snowball(Clone)" || coll.name == "Snowman" || coll.name == "Pylon")
         {
+            if(coll.name == "Snowman")
+            {
+                source.PlayOneShot(killSnowman, 1f);
+            }else if(coll.name == "Pylon")
+            {
+                source.PlayOneShot(killPlylon, 1f);
+            }
             canvas.GetComponent<GameManager>().die();
         }
     }
