@@ -161,13 +161,17 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (GameManager.started)
+		Debug.Log("Game manager is started");
         {
             RaycastHit hit;
+			Debug.Log("Direction is: " + direction);
             if (direction == "+x")
             {
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
-                if (!dontMove)
+				Debug.Log("dontMove is: " + dontMove);
+				if (!dontMove)
                 {
+					Debug.Log("setting velocity");
                     GetComponent<Rigidbody>().velocity = new Vector3(speed, GetComponent<Rigidbody>().velocity.y, 0f);
                 }
                 Vector3 currentPosition = transform.position;
@@ -222,11 +226,11 @@ public class Player : MonoBehaviour
 
             foreach (Touch touch in Input.touches)
             {
-                if (touch.phase == TouchPhase.Began && touch.position.x < Screen.width / 2 && canRespawn)
+                if (touch.phase == TouchPhase.Began && touch.position.x < Screen.width / 2)
                 {
-                    canvas.GetComponent<GameManager>().respawn();
-                    canRespawn = false;
-                    StartCoroutine(resetTouch());
+					source.PlayOneShot(respawnsound, 1f);
+					Debug.Log("Playing Sound" + respawnsound);
+					canvas.GetComponent<GameManager>().respawn();
                 }
                 else if (touch.phase == TouchPhase.Began && touch.position.x > Screen.width / 2)
                 {
@@ -339,10 +343,7 @@ public class Player : MonoBehaviour
 					}
 				}
         	}
-      	  } else
-        {
-            //GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
-        }
+      	  }
     }
 
     IEnumerator resetTouch()
