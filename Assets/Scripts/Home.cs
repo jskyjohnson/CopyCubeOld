@@ -36,8 +36,10 @@ public class Home : MonoBehaviour {
 
 	public GameObject selectButton;
 	public GameObject promoCodePanel;
+    private GameObject soundmanager;
 	void Start() {
-		GameObject.Find("SoundManager").GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("musicLevel")/100f;
+		GameObject.Find("SoundManager").GetComponents<AudioSource>()[0].volume = PlayerPrefs.GetFloat("musicLevel")/100f;
+        soundmanager = GameObject.Find("SoundManager");
 		Chartboost.cacheInterstitial (CBLocation.Default);
 		Chartboost.cacheRewardedVideo(CBLocation.Default);
 		text.text = PlayerPrefs.GetInt ("coins").ToString();
@@ -185,5 +187,9 @@ public class Home : MonoBehaviour {
 	public void openPromoCode() {
 		promoCodePanel.SetActive(true);
 	}
+    public void UITick()
+    {
+        soundmanager.GetComponent<BackgroundMusic>().UIClick();
+    }
 
 }

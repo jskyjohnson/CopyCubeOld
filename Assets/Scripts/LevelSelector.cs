@@ -15,9 +15,12 @@ public class LevelSelector : MonoBehaviour {
 	public Text compliment;
 	public GameObject scrollmap;
 	public Text coinsAdded;
-	// Use this for initialization
-	void Start () {
-		Chartboost.cacheInterstitial (CBLocation.Default);
+    private GameObject soundmanager;
+    // Use this for initialization
+    void Start () {
+        GameObject.Find("SoundManager").GetComponents<AudioSource>()[0].volume = PlayerPrefs.GetFloat("musicLevel") / 100f;
+        soundmanager = GameObject.Find("SoundManager");
+        Chartboost.cacheInterstitial (CBLocation.Default);
 		GameManager.showAdOnRightCondition();
 		buttons = GameObject.FindGameObjectsWithTag("Button");
 		foreach(GameObject button in buttons) {
@@ -121,4 +124,8 @@ public class LevelSelector : MonoBehaviour {
 			yield return new WaitForSeconds(0.2f);
 		}
 	}
+    public void UITick()
+    {
+        soundmanager.GetComponent<BackgroundMusic>().UIClick();
+    }
 }
