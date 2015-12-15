@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour {
 				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 			addOneToCloneCount();
+			PlayerPrefs.SetInt("timesRespawned", PlayerPrefs.GetInt("timesRespawned") + 1);
 			StartCoroutine(resetDeath());
 			StartCoroutine(freezeCamera(0.2f));
 		}
@@ -146,6 +147,7 @@ public class GameManager : MonoBehaviour {
 			player.GetComponent<Collider>().material = player.GetComponent<Player>().sticky;
 			player.transform.rotation = Quaternion.Euler(Vector3.zero);
 			addOneToCloneCount();
+			PlayerPrefs.SetInt("timesDied", PlayerPrefs.GetInt("timesDied") + 1);
 			StartCoroutine(freezeCamera(1f));
 			StartCoroutine(resetDeath());
 		}

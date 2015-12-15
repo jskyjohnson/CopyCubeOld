@@ -10,6 +10,13 @@ public class Home : MonoBehaviour {
 	public RectTransform center;
 	public Button selectedButton;
 	public GameObject shopPanel;
+	public GameObject settingsPanel;
+	public Text timesDied;
+	public Text timesRespawned;
+	public Text timesJumped;
+	public Text timesPerfect;
+	public Slider musicLevel;
+	public Slider soundLevel;
 	private float[] distance;
 	private bool dragging = false;
 	private int bttnDistance;
@@ -30,6 +37,7 @@ public class Home : MonoBehaviour {
 	public GameObject selectButton;
 	public GameObject promoCodePanel;
 	void Start() {
+		GameObject.Find("SoundManager").GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("musicLevel")/100f;
 		Chartboost.cacheInterstitial (CBLocation.Default);
 		Chartboost.cacheRewardedVideo(CBLocation.Default);
 		text.text = PlayerPrefs.GetInt ("coins").ToString();
@@ -111,6 +119,31 @@ public class Home : MonoBehaviour {
 
 	public void openShop() {
 		shopPanel.SetActive (true);
+	}
+
+	public void openSettings() {
+		settingsPanel.SetActive(true);
+		musicLevel.value = PlayerPrefs.GetFloat("musicLevel")/100f;
+		timesDied.text = "Died: " + PlayerPrefs.GetInt("timesDied");
+		timesRespawned.text = "Respawned: " + PlayerPrefs.GetInt("timesRespawned");
+		timesJumped.text = "Jumped: " + PlayerPrefs.GetInt("timesJumped");
+		timesPerfect.text = "Perfect Runs: " + PlayerPrefs.GetInt("timesPerfect");
+	}
+
+	public void closeSettings() {
+		settingsPanel.SetActive(false);
+		soundLevel.value = PlayerPrefs.GetFloat("soundEffect")/100f;
+
+	}
+
+	public void adjustMusic(float value) {
+		PlayerPrefs.SetFloat("musicLevel", value * 100f);
+		GameObject.Find("SoundManager").GetComponent<AudioSource>().volume = value;
+	}
+
+	public void adjustSound(float value) {
+		PlayerPrefs.SetFloat("soundEffect", value * 100f);
+		Debug.Log(PlayerPrefs.GetFloat("soundEffect"));
 	}
 
 	void LerpToBttn(int position) {
