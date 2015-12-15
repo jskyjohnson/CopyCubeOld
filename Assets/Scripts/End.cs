@@ -21,7 +21,7 @@ public class End : MonoBehaviour {
 			StartCoroutine(fly (coll.gameObject, nextLevel));
 			StartCoroutine(fadeObjects());
 			coll.gameObject.GetComponent<Rigidbody>().useGravity = false;
-			coll.gameObject.GetComponent<Rigidbody>().AddTorque(new Vector3(10f, 0f, 0f));
+			coll.gameObject.GetComponent<Rigidbody>().isKinematic = true;
 		}
 	}
 
@@ -31,17 +31,20 @@ public class End : MonoBehaviour {
 			Debug.Log("distance is increasing");
 		}
 	}
-
 	IEnumerator fly(GameObject item, string nextLevel) {
 		Destroy(GameObject.Find ("Player").GetComponent<Collider>());
 		flying = true;
 		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform"); 
-		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 2f, 0f);
-		yield return new WaitForSeconds(2f);
-		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, -1f, 0f);
-		yield return new WaitForSeconds(0.5f);
-		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 30f, 0f);
-		yield return new WaitForSeconds(0.9f);
+		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+		Material mat = item.GetComponentInChildren<MeshRenderer>().material;
+		while (mat.color.a > 0f)
+		{
+			Color newColor = mat.color;
+			newColor.a -= Time.deltaTime * 3f;
+			item.GetComponentInChildren<MeshRenderer>().material.color = newColor;
+			yield return null;
+		}
+		yield return new WaitForSeconds(0.6f);
 		Debug.Log ("setting next level to: " + (int.Parse(Application.loadedLevelName) + 1));
 		PlayerPrefs.SetInt ("nextLevel", int.Parse(Application.loadedLevelName) + 1);
 		if(PlayerPrefs.GetInt ("permaNextLevel") < PlayerPrefs.GetInt ("nextLevel")) {
