@@ -368,6 +368,7 @@ public class Player : MonoBehaviour
         if (IsGrounded()) //|| isTouchingObject)
         {
 			source.PlayOneShot(jumpsound, jumpvol);
+			PlayerPrefs.SetInt("timesJumped", PlayerPrefs.GetInt("timesJumped") + 1);
 			Debug.Log("Playing Sound " + jumpsound);
 			if(!inverted) {
            		GetComponent<Rigidbody>().velocity = new Vector3(GetComponent<Rigidbody>().velocity.x, 20f, GetComponent<Rigidbody>().velocity.z);

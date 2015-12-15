@@ -5,8 +5,18 @@ using System.Collections;
 
 public class Initializer : MonoBehaviour {
 	void Start () {
+		PlayerPrefs.DeleteAll();
+
 		PlayerPrefs.SetInt ("coins", 2000);
 		PlayerPrefs.SetString ("PinkGuy", "true");
+		if(PlayerPrefs.GetString("selected") == "") {
+			PlayerPrefs.SetString ("selected", "PinkGuy");
+		}
+		if(PlayerPrefs.GetString("firstTime") != "false") {
+			PlayerPrefs.SetFloat("musicLevel", 100f);
+			PlayerPrefs.SetFloat("soundEffect", 100f);
+		}
+		PlayerPrefs.SetString("firstTime", "false");
 		Application.targetFrameRate = 60;
 		if (this.gameObject.name == "Initializer") {
 		//	SoomlaStore.Initialize (new AppAssets ());

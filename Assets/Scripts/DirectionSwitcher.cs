@@ -4,6 +4,7 @@ using System.Collections;
 public class DirectionSwitcher : MonoBehaviour {
 	public string direction;
 	public bool mobOnly;
+	public bool noMob;
 
 	void OnTriggerEnter(Collider coll) {
 		if(coll.name == "Player" && mobOnly != true) {
@@ -26,6 +27,7 @@ public class DirectionSwitcher : MonoBehaviour {
 				GameObject.Find ("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 		}
+		if(!noMob) {
 		if(coll.name == "FakePlayer") {
 			if(direction == "+x") {
 				coll.gameObject.GetComponent<FakeHomePlayer>().direction = "+x";
@@ -105,6 +107,7 @@ public class DirectionSwitcher : MonoBehaviour {
 			} else if (direction == "-z") {
 				coll.gameObject.GetComponent<Pylon>().direction = "-z";
 			}
+		}
 		}
 	}
 }

@@ -69,6 +69,10 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
 			startingPage = 2;
 		} else if (PlayerPrefs.GetInt ("nextLevel") > 16 && PlayerPrefs.GetInt ("nextLevel") <= 24) {
 			startingPage = 3;
+		} else if (PlayerPrefs.GetInt ("nextLevel") > 24 && PlayerPrefs.GetInt ("nextLevel") <= 32) {
+			startingPage = 4;
+		} else if (PlayerPrefs.GetInt ("nextLevel") > 32 && PlayerPrefs.GetInt ("nextLevel") <= 41) {
+			startingPage = 5;
 		}
 
         _scrollRectComponent = GetComponent<ScrollRect>();
