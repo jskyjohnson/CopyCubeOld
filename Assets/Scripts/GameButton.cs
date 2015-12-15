@@ -48,9 +48,7 @@ public class GameButton : MonoBehaviour {
 		if(!inverted) {
 			RaycastHit[] hits;
 			hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z), Vector3.up, 1.2f);
-			Debug.Log (hits.Length);
 			foreach(RaycastHit hit in hits) {
-				Debug.Log (hit.collider.name);
 				if(hit.collider.gameObject.name == "Player" || hit.collider.gameObject.name == "Clone(Clone)") {
 					targetHit = true;
 				}
