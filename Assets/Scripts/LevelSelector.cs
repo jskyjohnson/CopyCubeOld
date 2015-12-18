@@ -16,6 +16,11 @@ public class LevelSelector : MonoBehaviour {
 	public GameObject scrollmap;
 	public Text coinsAdded;
     private GameObject soundmanager;
+	public GameObject congSounds;
+	public AudioClip cong1;
+	public AudioClip cong2;
+	public AudioClip cong3;
+
     // Use this for initialization
     void Start () {
         GameObject.Find("SoundManager").GetComponents<AudioSource>()[0].volume = PlayerPrefs.GetFloat("musicLevel") / 100f;
@@ -77,15 +82,21 @@ public class LevelSelector : MonoBehaviour {
 				coinsAdded.text = "+30";
 				PlayerPrefs.SetInt("timesPerfect", PlayerPrefs.GetInt("timesPerfect") + 1);
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 30);
+				congSounds.GetComponent<AudioSource>().clip = cong3;
+				congSounds.GetComponent<AudioSource>().Play();
 				StartCoroutine(BlinkText());
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 2) {
 				compliment.text = "Good Job!";
 				coinsAdded.text = "+15";
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 15);
+				congSounds.GetComponent<AudioSource>().clip = cong2;
+				congSounds.GetComponent<AudioSource>().Play();
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 1) {
 				compliment.text = "Well Done";
 				coinsAdded.text = "+10";
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 10);
+				congSounds.GetComponent<AudioSource>().clip = cong1;
+				congSounds.GetComponent<AudioSource>().Play();
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 0);
 		}

@@ -133,7 +133,7 @@ public class Player : MonoBehaviour
 		}
         RaycastHit[] hits;
 		if(!inverted) {
-			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.down, 0.70f);
+			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.down, 0.5f);
     	    foreach (RaycastHit bang in hits) {
 				Debug.Log (transform.position.y - 0.80f - bang.collider.transform.position.y);
        	    	if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube" && bang.collider.transform.position.y <= transform.position.y - 0.80f) {
@@ -146,7 +146,7 @@ public class Player : MonoBehaviour
        		}
         	return false;
 		} else {
-			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.up, 0.70f);
+			hits = Physics.SphereCastAll(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.45f, Vector3.up, 0.5f);
 			foreach (RaycastHit bang in hits) {
 				if (bang.collider.gameObject.name == "Cube" || bang.collider.gameObject.name == "Clone(Clone)" || bang.collider.gameObject.name == "IceCube" && bang.collider.transform.position.y >= transform.position.y + 0.80f) {
 					dontMove = false;
@@ -472,14 +472,18 @@ public class Player : MonoBehaviour
     {
         if (coll.name == "Snowball(Clone)" || coll.name == "Snowman" || coll.name == "Pylon")
         {
-            if(coll.name == "Snowman")
-            {
-                source.PlayOneShot(killSnowman, 1f);
-            }else if(coll.name == "Pylon")
-            {
-                source.PlayOneShot(killPlylon, 1f);
-            }
             canvas.GetComponent<GameManager>().die();
         }
+		if (coll.name == "Head")
+		{
+			coll.name = "Dead";
+			if(coll.transform.parent.name == "Snowman")
+			{
+				source.PlayOneShot(killSnowman, 1f);
+			} else if(coll.transform.parent.name == "Pylon")
+			{
+				source.PlayOneShot(killPlylon, 1f);
+			}
+		}
     }
 }

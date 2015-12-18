@@ -5,7 +5,6 @@ using System.Collections;
 
 public class Initializer : MonoBehaviour {
 	void Start () {
-
 		PlayerPrefs.SetInt ("coins", 2000);
 		PlayerPrefs.SetString ("PinkGuy", "true");
 		if(PlayerPrefs.GetString("selected") == "") {

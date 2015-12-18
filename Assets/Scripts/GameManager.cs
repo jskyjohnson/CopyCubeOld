@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour {
 	public bool paused;
 	public GameObject pausePanel;
 	public GameObject buttonContainer;
+
+	public GameObject resumeButton;
+	public GameObject restartButton;
+	public GameObject menuButton;
+	public GameObject shareButton;
 	private float timePlayed;
 	private bool playerCanDie;
 	// Use this for initialization
@@ -25,6 +30,18 @@ public class GameManager : MonoBehaviour {
 		player.SetActive(false);
 		timePlayed = 0f;
 		playerCanDie = true;
+		pausePanel.SetActive(true);
+		resumeButton = GameObject.Find("Resume");
+		restartButton = GameObject.Find("Restart");
+		menuButton = GameObject.Find("Menu");
+		shareButton = GameObject.Find("Share");
+		resumeButton.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 75f, 0f);
+		restartButton.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f, 0f);
+		menuButton.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -75f, 0f);
+		buttonContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -546f);
+		Destroy(shareButton);
+		pausePanel.SetActive(false);
+		Debug.Log(resumeButton);
 	}
 	
 	// Update is called once per frame
