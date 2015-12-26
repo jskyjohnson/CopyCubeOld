@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject menuButton;
 	public GameObject shareButton;
 	private float timePlayed;
+	private float adtimePlayed;
 	private bool playerCanDie;
 	// Use this for initialization
 	void Start () {
@@ -51,15 +52,21 @@ public class GameManager : MonoBehaviour {
 
 	public void endGameTime() {
 		PlayerPrefs.SetFloat ("timePlayed", PlayerPrefs.GetFloat ("timePlayed") + timePlayed);
+		PlayerPrefs.SetFloat ("adTimePlayed", PlayerPrefs.GetFloat ("adTimePlayed") + timePlayed);
+		timePlayed = 0f;
 	}
 	public static void showAdOnRightCondition() {
-		if(PlayerPrefs.GetFloat ("timePlayed") > 90f) {
+		Debug.Log("ad timed played: " + PlayerPrefs.GetFloat ("adTimePlayed"));
+		if(PlayerPrefs.GetFloat ("adTimePlayed") > 90f) {
 			ChartboostExample.runAd();
+			PlayerPrefs.SetFloat ("adTimePlayed", 0f);
 		}
 	}
 
 	public void pauseGame() {
 		PlayerPrefs.SetFloat ("timePlayed", PlayerPrefs.GetFloat ("timePlayed") + timePlayed);
+		PlayerPrefs.SetFloat ("adTimePlayed", PlayerPrefs.GetFloat ("adTimePlayed") + timePlayed);
+		timePlayed = 0f;
 		if(paused == false) {
 			player.GetComponent<Rigidbody>().isKinematic = true;
 			paused = true;

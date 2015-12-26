@@ -468,7 +468,7 @@ public class ChartboostExample: MonoBehaviour
 	}
 	
 	void didCompleteRewardedVideo(CBLocation location, int reward) {
-		PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins"));
+		PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 50);
 	}
 
 	void didDisplayRewardedVideo(CBLocation location){

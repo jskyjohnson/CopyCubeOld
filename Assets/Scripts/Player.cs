@@ -163,17 +163,14 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (GameManager.started)
-		Debug.Log("Game manager is started");
         {
             RaycastHit hit;
-			Debug.Log("Direction is: " + direction);
             if (direction == "+x")
             {
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
-				Debug.Log("dontMove is: " + dontMove);
+				//Debug.Log("dontMove is: " + dontMove);
 				if (!dontMove)
                 {
-					Debug.Log("setting velocity");
                     GetComponent<Rigidbody>().velocity = new Vector3(speed, GetComponent<Rigidbody>().velocity.y, 0f);
                 }
                 Vector3 currentPosition = transform.position;
