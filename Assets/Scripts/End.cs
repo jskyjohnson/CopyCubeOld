@@ -9,10 +9,22 @@ public class End : MonoBehaviour {
 	bool flying;
 	public int threeStarMax;
 	public int twoStarMax;
+	public int oneStarMax;
 	void Start() {
 		position = transform.position;
 		distance = 44f;
 		GameObject.Find ("Canvas").GetComponent<GameManager>().endGameTime();
+		GameObject parObject = (GameObject)Instantiate(Resources.Load("Par"));
+		parObject.transform.parent = GameObject.Find("Canvas").transform;
+		parObject.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 1f);
+		parObject.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 1f);
+		parObject.GetComponent<RectTransform>().eulerAngles = new Vector3(30f, 45f, 0f);
+		parObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -27f, 0f);
+		parObject.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+		parObject.GetComponent<RectTransform>().sizeDelta = new Vector2(800f, 50f);
+		GameObject.Find("3StarText").GetComponent<Text>().text = threeStarMax.ToString();
+		GameObject.Find("2StarText").GetComponent<Text>().text = twoStarMax.ToString();
+		GameObject.Find("1StarText").GetComponent<Text>().text = oneStarMax.ToString();
 	}
 	void OnTriggerEnter(Collider coll) {
 		if(coll.gameObject.name == "Player") {
@@ -58,11 +70,13 @@ public class End : MonoBehaviour {
 				PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 2);
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 2);
-		} else {
+		} else if (int.Parse(GameObject.Find ("Canvas").GetComponent<GameManager>().clonesCount.GetComponent<Text>().text) <= oneStarMax){
 			if(PlayerPrefs.GetInt("levelStar" + Application.loadedLevelName) < 1) {
 				PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, 1);
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 1);
+		} else {
+			PlayerPrefs.SetInt("PassedLevelStars", -1);
 		}
 		Application.LoadLevel ("LevelSelector");
 	}

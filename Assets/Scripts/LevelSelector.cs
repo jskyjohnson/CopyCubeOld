@@ -57,6 +57,9 @@ public class LevelSelector : MonoBehaviour {
 		} else {
 			int i = 3 - PlayerPrefs.GetInt("PassedLevelStars");
 			foreach(GameObject star in stars) {
+				if(i == 4) {
+					i = 3;
+				}
 				if(i > 0) {
 					Destroy (star);
 					i--;
@@ -86,17 +89,21 @@ public class LevelSelector : MonoBehaviour {
 				congSounds.GetComponent<AudioSource>().Play();
 				StartCoroutine(BlinkText());
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 2) {
-				compliment.text = "Good Job!";
+				compliment.text = "Awesome!";
 				coinsAdded.text = "+15";
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 15);
 				congSounds.GetComponent<AudioSource>().clip = cong2;
 				congSounds.GetComponent<AudioSource>().Play();
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 1) {
-				compliment.text = "Well Done";
+				compliment.text = "Great Job!";
 				coinsAdded.text = "+10";
 				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 10);
 				congSounds.GetComponent<AudioSource>().clip = cong1;
 				congSounds.GetComponent<AudioSource>().Play();
+			} else if (PlayerPrefs.GetInt("PassedLevelStars") == -1) {
+				compliment.text = "Good Job!";
+				coinsAdded.text = "+5";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 5);
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 0);
 		}
