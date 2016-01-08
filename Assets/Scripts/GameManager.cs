@@ -42,7 +42,6 @@ public class GameManager : MonoBehaviour {
 		buttonContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -546f);
 		Destroy(shareButton);
 		pausePanel.SetActive(false);
-		Debug.Log(resumeButton);
 	}
 	
 	// Update is called once per frame
@@ -126,7 +125,7 @@ public class GameManager : MonoBehaviour {
 			addOneToCloneCount();
 			PlayerPrefs.SetInt("timesRespawned", PlayerPrefs.GetInt("timesRespawned") + 1);
 			StartCoroutine(resetDeath());
-			StartCoroutine(freezeCamera(0.2f));
+			StartCoroutine(freezeCamera(0.25f));
 		}
 	}
 
@@ -151,7 +150,7 @@ public class GameManager : MonoBehaviour {
 				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 			StartCoroutine(resetDeath());
-			StartCoroutine(freezeCamera(0.1f));
+			StartCoroutine(freezeCamera(0.25f));
 		}
 	}
 

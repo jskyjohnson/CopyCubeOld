@@ -18,10 +18,11 @@ public class End : MonoBehaviour {
 		parObject.transform.parent = GameObject.Find("Canvas").transform;
 		parObject.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 1f);
 		parObject.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 1f);
-		parObject.GetComponent<RectTransform>().eulerAngles = new Vector3(30f, 45f, 0f);
 		parObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -27f, 0f);
 		parObject.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
 		parObject.GetComponent<RectTransform>().sizeDelta = new Vector2(800f, 50f);
+		parObject.GetComponent<Canvas>().sortingOrder = 1;
+		parObject.transform.localEulerAngles = Vector3.zero;
 		GameObject.Find("3StarText").GetComponent<Text>().text = threeStarMax.ToString();
 		GameObject.Find("2StarText").GetComponent<Text>().text = twoStarMax.ToString();
 		GameObject.Find("1StarText").GetComponent<Text>().text = oneStarMax.ToString();

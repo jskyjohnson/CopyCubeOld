@@ -57,6 +57,7 @@ public class Home : MonoBehaviour {
 			}
 		}
 	}
+
 	void Update() {
 		for(int i = 0; i < bttn.Length; i++) {
 			distance[i] = Mathf.Abs(center.transform.position.x - bttn[i].transform.position.x);
