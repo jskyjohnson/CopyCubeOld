@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
+	//optimization
+	public int framesDelay;
+
     public GameObject canvas;
     public static string direction;
     public static string respawnDirection;
@@ -53,15 +56,14 @@ public class Player : MonoBehaviour
 	public bool immuneToStuck;
 	public bool inverted;
 	float timePassed;
-	bool isTouchingObject;
-	private GameObject[] taggedGameObjects;
+	private List<GameObject> taggedGameObjects;
 	void Start () {
+		framesDelay = 0;
 		timePassed = 0f;
 		respawnInverted = false;
 		inverted = false;
 		isStuck = false;
 		source = GetComponent<AudioSource>();
-		source.PlayOneShot(spawnsound, 1f);
 
 		Debug.Log (PlayerPrefs.GetString ("selected"));
 		if(PlayerPrefs.GetString ("selected") == "BlueGuy") {
@@ -116,14 +118,14 @@ public class Player : MonoBehaviour
 		respawnLocation = new Vector3(0f, 4f, 0f);
 		respawnDirection = direction;
 		Physics.gravity = new Vector3(0, -50f, 0);
-		isTouchingObject = false;
-		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform");
+		taggedGameObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag("Platform"));
 		foreach(GameObject platform in taggedGameObjects) {
 			Material mat = platform.GetComponentInChildren<SkinnedMeshRenderer>().material;
 			Color newColor = mat.color;
 			newColor.a = 0f;
 			platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
 		}
+		GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 	}
 
     bool IsGrounded()
@@ -167,8 +169,7 @@ public class Player : MonoBehaviour
             RaycastHit hit;
             if (direction == "+x")
             {
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
-				//Debug.Log("dontMove is: " + dontMove);
+               // GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 				if (!dontMove)
                 {
                     GetComponent<Rigidbody>().velocity = new Vector3(speed, GetComponent<Rigidbody>().velocity.y, 0f);
@@ -179,7 +180,7 @@ public class Player : MonoBehaviour
             }
             else if (direction == "-x")
             {
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
+                //GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
                 if (!dontMove)
                 {
                     GetComponent<Rigidbody>().velocity = new Vector3(-speed, GetComponent<Rigidbody>().velocity.y, 0f);
@@ -191,7 +192,7 @@ public class Player : MonoBehaviour
             else if (direction == "+z")
             {
                 // transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0f, 0f));
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+               // GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
                 if (!dontMove)
                 {
                     GetComponent<Rigidbody>().velocity = new Vector3(0f, GetComponent<Rigidbody>().velocity.y, speed);
@@ -202,7 +203,7 @@ public class Player : MonoBehaviour
             }
             else if (direction == "-z")
             {
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                //GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
                 if (!dontMove)
                 {
                     GetComponent<Rigidbody>().velocity = new Vector3(0f, GetComponent<Rigidbody>().velocity.y, -speed);
@@ -238,23 +239,34 @@ public class Player : MonoBehaviour
             }
             //check which blocks are close and fade in
             // loop through each tagged object, remembering nearest one found
-            taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform");
-            foreach (GameObject platform in taggedGameObjects)
-            {
-                Vector3 objectPos = platform.transform.position;
-                float distanceSqr = (objectPos - transform.position).sqrMagnitude;
-                if (customFadeDistance != 0)
-                {
-                    if (distanceSqr < customFadeDistance)
-                    {
-                        StartCoroutine(FadeIn(platform, 0.23f));
-                    }
-                }
-                else if (distanceSqr < 47f)
-                {
-                    StartCoroutine(FadeIn(platform, 0.23f));
-                }
-            }
+            //taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform");
+			if(framesDelay > 10) {
+				int i = 0;
+				while (i < taggedGameObjects.Count) {
+					if(taggedGameObjects[i].tag == "Untagged") {
+						taggedGameObjects.Remove(taggedGameObjects[i]);
+					}
+					i++;
+				}
+				foreach (GameObject platform in taggedGameObjects)
+            	{
+            	    Vector3 objectPos = platform.transform.position;
+                	float distanceSqr = (objectPos - transform.position).sqrMagnitude;
+               		if (customFadeDistance != 0)
+                		{
+                    		if (distanceSqr < customFadeDistance)
+                    		{
+                        		StartCoroutine(FadeIn(platform, 0.23f));
+                    		}
+                	}
+                	else if (distanceSqr < 47f)
+                	{
+                    	StartCoroutine(FadeIn(platform, 0.23f));
+                	}
+            	}
+				framesDelay = 0;
+			}
+			framesDelay++;
             if (direction == "+x" && Physics.SphereCast(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.3f, Vector3.right, out hit, 0.4f))
             {
                 if (hit.collider.gameObject.name == "Cube" || hit.collider.gameObject.name == "IceCube" || hit.collider.gameObject.name == "Clone(Clone)")
@@ -365,7 +377,7 @@ public class Player : MonoBehaviour
 			StartCoroutine(StuckImmunity());
 		}
 		Debug.Log (IsGrounded());
-        if (IsGrounded()) //|| isTouchingObject)
+		if (IsGrounded())
         {
 			source.PlayOneShot(jumpsound, jumpvol);
 			PlayerPrefs.SetInt("timesJumped", PlayerPrefs.GetInt("timesJumped") + 1);
@@ -454,14 +466,12 @@ public class Player : MonoBehaviour
 		timePassed += Time.deltaTime;
 		if(coll.gameObject.name == "Cube" || coll.gameObject.name == "Clone(Clone)" && timePassed > 0.6f && coll.gameObject.transform.position.y < transform.position.y - 0.45f) {
 			timePassed = 0f;
-			isTouchingObject = true;
 		}
 	}
 
 	void OnCollisionExit(Collision coll) {
 		if(coll.gameObject.name == "Cube" || coll.gameObject.name == "Clone(Clone)") {
 			timePassed = 0f;
-			isTouchingObject = false;
 		}
 	}
 

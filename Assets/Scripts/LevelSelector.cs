@@ -38,6 +38,9 @@ public class LevelSelector : MonoBehaviour {
 			} else if (PlayerPrefs.GetInt("levelStar" + button.GetComponentInChildren<Text>().text) == 1) {
 				button.GetComponent<Image>().sprite = oneStar;
 				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
+			} else if (PlayerPrefs.GetInt("levelStar" + button.GetComponentInChildren<Text>().text) == -1) {
+				button.GetComponent<Image>().sprite = noStar;
+				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
 			} else if(PlayerPrefs.GetInt ("permaNextLevel").ToString() == button.GetComponentInChildren<Text>().text) {
 				button.GetComponent<Image>().sprite = noStar;
 				button.GetComponent<Button>().onClick.AddListener(() => { loadLevel ();});
@@ -82,16 +85,16 @@ public class LevelSelector : MonoBehaviour {
 			}
 			if(PlayerPrefs.GetInt("PassedLevelStars") == 3) {
 				compliment.text = "SUPERSTAR!";
-				coinsAdded.text = "+30";
+				coinsAdded.text = "+50";
 				PlayerPrefs.SetInt("timesPerfect", PlayerPrefs.GetInt("timesPerfect") + 1);
-				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 30);
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 50);
 				congSounds.GetComponent<AudioSource>().clip = cong3;
 				congSounds.GetComponent<AudioSource>().Play();
 				StartCoroutine(BlinkText());
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 2) {
 				compliment.text = "Awesome!";
-				coinsAdded.text = "+15";
-				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 15);
+				coinsAdded.text = "+25";
+				PlayerPrefs.SetInt ("coins", PlayerPrefs.GetInt ("coins") + 25);
 				congSounds.GetComponent<AudioSource>().clip = cong2;
 				congSounds.GetComponent<AudioSource>().Play();
 			} else if (PlayerPrefs.GetInt("PassedLevelStars") == 1) {

@@ -24,7 +24,7 @@ public class DirectionSwitcher : MonoBehaviour {
 			if(direction == "+x" || direction == "-x") {
 				GameObject.Find ("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 			} else if(direction == "+z" || direction == "-z") {
-				GameObject.Find ("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+				GameObject.Find ("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 		}
 		if(!noMob) {

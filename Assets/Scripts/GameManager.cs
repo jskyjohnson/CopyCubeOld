@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour {
 			if(Player.direction == "+x" || Player.direction == "-x") {
 				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 			} else if(Player.direction == "+z" || Player.direction == "-z") {
-				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 			addOneToCloneCount();
 			PlayerPrefs.SetInt("timesRespawned", PlayerPrefs.GetInt("timesRespawned") + 1);
@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour {
 			if(Player.direction == "+x" || Player.direction == "-x") {
 				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
 			} else if(Player.direction == "+z" || Player.direction == "-z") {
-				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			}
 			StartCoroutine(resetDeath());
 			StartCoroutine(freezeCamera(0.25f));
@@ -173,6 +173,11 @@ public class GameManager : MonoBehaviour {
 			PlayerPrefs.SetInt("timesDied", PlayerPrefs.GetInt("timesDied") + 1);
 			StartCoroutine(freezeCamera(1f));
 			StartCoroutine(resetDeath());
+			if(Player.direction == "+x" || Player.direction == "-x") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
+			} else if(Player.direction == "+z" || Player.direction == "-z") {
+				player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			}
 		}
 	}
 

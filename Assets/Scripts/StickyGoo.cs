@@ -2,12 +2,6 @@
 using System.Collections;
 
 public class StickyGoo : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
 	// Update is called once per frame
 	void OnTriggerEnter(Collider coll) {
 		if(coll.name == "Player") {

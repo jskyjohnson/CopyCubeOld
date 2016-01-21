@@ -5,14 +5,11 @@ public class End : MonoBehaviour {
 	private Vector3 position;
 	public string nextLevel;
 	GameObject[] taggedGameObjects;
-	float distance;
-	bool flying;
 	public int threeStarMax;
 	public int twoStarMax;
 	public int oneStarMax;
 	void Start() {
 		position = transform.position;
-		distance = 44f;
 		GameObject.Find ("Canvas").GetComponent<GameManager>().endGameTime();
 		GameObject parObject = (GameObject)Instantiate(Resources.Load("Par"));
 		parObject.transform.parent = GameObject.Find("Canvas").transform;
@@ -32,21 +29,13 @@ public class End : MonoBehaviour {
 			coll.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
 			GameManager.started = false;
 			StartCoroutine(fly (coll.gameObject, nextLevel));
-			StartCoroutine(fadeObjects());
 			coll.gameObject.GetComponent<Rigidbody>().useGravity = false;
 			coll.gameObject.GetComponent<Rigidbody>().isKinematic = true;
 		}
 	}
 
-	void Update() {
-		if(flying) {
-			distance++;
-			Debug.Log("distance is increasing");
-		}
-	}
 	IEnumerator fly(GameObject item, string nextLevel) {
 		Destroy(GameObject.Find ("Player").GetComponent<Collider>());
-		flying = true;
 		taggedGameObjects = GameObject.FindGameObjectsWithTag("Platform"); 
 		item.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
 		Material mat = item.GetComponentInChildren<MeshRenderer>().material;
@@ -77,51 +66,11 @@ public class End : MonoBehaviour {
 			}
 			PlayerPrefs.SetInt("PassedLevelStars", 1);
 		} else {
+			if(PlayerPrefs.GetInt("levelStar") + Application.loadedLevelName != "0") {
+				PlayerPrefs.SetInt("levelStar" + Application.loadedLevelName, -1);
+			}
 			PlayerPrefs.SetInt("PassedLevelStars", -1);
 		}
 		Application.LoadLevel ("LevelSelector");
-	}
-
-	IEnumerator fadeObjects() {
-		while(true) {
-			foreach (GameObject platform in taggedGameObjects) {
-				Vector3 objectPos = platform.transform.position;
-				float distanceSqr = (objectPos - transform.position).sqrMagnitude;
-				if (distanceSqr < distance) {
-					StartCoroutine(FadeIn (platform, 1f));
-				}
-			}
-			yield return new WaitForSeconds(0.1f);
-		}
-	}
-
-	public IEnumerator FadeIn (GameObject platform, float duration)
-	{
-		Material mat = platform.GetComponentInChildren<SkinnedMeshRenderer>().material;
-		if(platform.name == "End") {
-			while(mat.color.a < 0.3f)
-			{
-				Color newColor = mat.color;
-				newColor.a += Time.deltaTime / duration;
-				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
-				yield return null;
-			} 
-		} else if (platform.name == "Checkpoint"){
-			while(mat.color.a < 0.5f)
-			{
-				Color newColor = mat.color;
-				newColor.a += Time.deltaTime / duration;
-				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
-				yield return null;
-			} 
-		} else {
-			while(mat.color.a < 1f)
-			{
-				Color newColor = mat.color;
-				newColor.a += Time.deltaTime / duration;
-				platform.GetComponentInChildren<SkinnedMeshRenderer>().material.color = newColor;
-				yield return null;
-			} 
-		}
 	}
 }

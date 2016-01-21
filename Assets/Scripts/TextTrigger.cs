@@ -7,8 +7,8 @@ public class TextTrigger : MonoBehaviour {
 	// Use this for initialization
 	void OnTriggerEnter(Collider coll) {
 		if(coll.name == "Player") {
- 		text.GetComponent<Text>().text = textValue;
-		StartCoroutine(textCycle());
+ 			text.GetComponent<Text>().text = textValue;
+			StartCoroutine(textCycle());
 		}
 	}
 	
